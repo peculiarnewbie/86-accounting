@@ -35,22 +35,46 @@ export default function Home() {
 		<main class="mx-auto p-4 text-center text-gray-700">
 			<form class="mx-auto flex max-w-80 flex-col items-start gap-2 rounded-md bg-slate-200 p-4">
 				<div class="flex flex-col items-start ">
+					<p>Arah</p>
+					<div class="flex gap-2">
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							Masuk
+						</div>
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							Keluar
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-col items-start ">
 					<p>bank</p>
-					<select class="rounded-md p-2" name="bank">
-						<option value="BNI">BNI</option>
-						<option value="Mandiri">Mandiri</option>
-					</select>
+					<div class="flex gap-2">
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							BNI
+						</div>
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							Mandiri
+						</div>
+					</div>
 				</div>
 				<div class="flex flex-col items-start ">
 					<p>kategori</p>
-					<select class="rounded-md p-2" name="bank">
-						<option value="Sosial">Sosial</option>
-						<option value="Pendidikan">Pendidikan</option>
-					</select>
+					<div class="flex gap-2">
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							Sosial
+						</div>
+						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+							Pendidikan
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-col items-start ">
+					<p>tanggal</p>
+					<input class="rounded-md p-2" type="date" name="date" />
 				</div>
 				<div class="flex flex-col items-start ">
 					<p>Jumlah</p>
 					<input
+						class="rounded-md p-2"
 						ref={moneyRef}
 						name="money"
 						type="number"
@@ -62,6 +86,10 @@ export default function Home() {
 						}}
 					/>
 					<p>{moneyString()}</p>
+				</div>
+				<div class="flex flex-col items-start ">
+					<p>catatan</p>
+					<input class="rounded-md p-2" type="text" name="note" />
 				</div>
 				<button type="submit">input</button>
 			</form>
