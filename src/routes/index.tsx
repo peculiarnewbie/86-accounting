@@ -1,13 +1,35 @@
 import { action, redirect } from "@solidjs/router";
+import dayjs from "dayjs";
 import { createSignal } from "solid-js";
+
+export type DataType = {
+	arah: ArahType;
+	bank: BankType;
+	kategori: KategoriType;
+	date: number;
+	money: number;
+	note: string;
+};
 
 const inputData = action(async (formData: FormData) => {
 	"use server";
-	await new Promise((resolve, reject) => setTimeout(resolve, 1000));
-	const username = formData.get("username");
-	console.log(formData);
-	if (username === "admin") throw redirect("/admin");
-	return new Error("Invalid username");
+
+	const pairs = [];
+
+	for (const pair of formData.entries()) {
+		pairs.push([pair[0], pair[1]]);
+	}
+
+	const data: DataType = {
+		arah: pairs[0][1] as ArahType,
+		bank: pairs[1][1] as BankType,
+		kategori: pairs[2][1] as KategoriType,
+		date: dayjs(pairs[3][1] as string, "YYYY-MM-DD").valueOf(),
+		money: parseInt(pairs[4][1] as string),
+		note: pairs[5][1] as string,
+	};
+
+	console.log(data);
 });
 
 const Banks = {
