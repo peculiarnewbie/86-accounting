@@ -30,3 +30,5 @@ Thumbs.db
 
 .vinxi
 .reflect
+.wrangler
+./wrangler.toml
