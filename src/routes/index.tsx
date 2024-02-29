@@ -1,10 +1,43 @@
-import { A } from "@solidjs/router";
+import { action, redirect } from "@solidjs/router";
 import { createSignal } from "solid-js";
-import Counter from "~/components/Counter";
+
+const inputData = action(async (formData: FormData) => {
+	"use server";
+	await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+	const username = formData.get("username");
+	console.log(formData);
+	if (username === "admin") throw redirect("/admin");
+	return new Error("Invalid username");
+});
+
+const Banks = {
+	BNI: "bni",
+	Mandiri: "mandiri",
+} as const;
+
+type BankType = (typeof Banks)[keyof typeof Banks];
+
+const Arah = {
+	Masuk: "masuk",
+	Keluar: "keluar",
+} as const;
+
+type ArahType = (typeof Arah)[keyof typeof Arah];
+
+const Kategori = {
+	Sosial: "sosial",
+	Pendidikan: "pendidikan",
+} as const;
+
+type KategoriType = (typeof Kategori)[keyof typeof Kategori];
 
 export default function Home() {
 	const [money, setMoney] = createSignal(0);
 	const moneyString = () => parseCurrency(money());
+
+	const [arah, setArah] = createSignal<ArahType>(Arah.Masuk);
+	const [bank, setBank] = createSignal<BankType>(Banks.BNI);
+	const [kategori, setKategori] = createSignal<KategoriType>(Kategori.Sosial);
 
 	const parseCurrency = (money: number) => {
 		let string = money.toString();
@@ -33,38 +66,63 @@ export default function Home() {
 
 	return (
 		<main class="mx-auto p-4 text-center text-gray-700">
-			<form class="mx-auto flex max-w-80 flex-col items-start gap-2 rounded-md bg-slate-200 p-4">
+			<form
+				action={inputData}
+				method="post"
+				class="mx-auto flex max-w-80 flex-col gap-2 rounded-md bg-slate-200 p-4"
+			>
 				<div class="flex flex-col items-start ">
-					<p>Arah</p>
+					<p>{"Arah"}</p>
+					<input hidden value={arah()} name="arah" />
 					<div class="flex gap-2">
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						<button
+							onclick={() => setArah(Arah.Masuk)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${arah() === Arah.Masuk ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							Masuk
-						</div>
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						</button>
+						<button
+							onclick={() => setArah(Arah.Keluar)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${arah() === Arah.Keluar ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							Keluar
-						</div>
+						</button>
 					</div>
 				</div>
 				<div class="flex flex-col items-start ">
 					<p>bank</p>
+					<input hidden value={bank()} name="bank" />
 					<div class="flex gap-2">
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						<button
+							onclick={() => setBank(Banks.BNI)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${bank() === Banks.BNI ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							BNI
-						</div>
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						</button>
+						<div
+							onclick={() => setBank(Banks.Mandiri)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${bank() === Banks.Mandiri ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							Mandiri
 						</div>
 					</div>
 				</div>
 				<div class="flex flex-col items-start ">
 					<p>kategori</p>
+					<input hidden value={kategori()} name="kategori" />
 					<div class="flex gap-2">
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						<button
+							onclick={() => setKategori(Kategori.Sosial)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${kategori() === Kategori.Sosial ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							Sosial
-						</div>
-						<div class="min-w-24 cursor-pointer rounded-md bg-slate-100 p-2">
+						</button>
+						<button
+							onclick={() => setKategori(Kategori.Pendidikan)}
+							class={`min-w-24 cursor-pointer rounded-md p-2 ${kategori() === Kategori.Pendidikan ? "bg-blue-400" : "bg-slate-100"}`}
+						>
 							Pendidikan
-						</div>
+						</button>
 					</div>
 				</div>
 				<div class="flex flex-col items-start ">
@@ -74,7 +132,7 @@ export default function Home() {
 				<div class="flex flex-col items-start ">
 					<p>Jumlah</p>
 					<input
-						class="rounded-md p-2"
+						class="w-full rounded-md p-2"
 						ref={moneyRef}
 						name="money"
 						type="number"
@@ -89,9 +147,18 @@ export default function Home() {
 				</div>
 				<div class="flex flex-col items-start ">
 					<p>catatan</p>
-					<input class="rounded-md p-2" type="text" name="note" />
+					<input
+						class=" w-full rounded-md p-2"
+						type="text"
+						name="note"
+					/>
 				</div>
-				<button type="submit">input</button>
+				<button
+					class={`min-w-24 cursor-pointer rounded-md bg-slate-100 p-2`}
+					type="submit"
+				>
+					input
+				</button>
 			</form>
 		</main>
 	);
