@@ -1,15 +1,22 @@
 import { action, redirect } from "@solidjs/router";
 import dayjs from "dayjs";
+import { nanoid } from "nanoid";
 import { createSignal } from "solid-js";
+import {
+	Arah,
+	ArahType,
+	BankType,
+	Banks,
+	DataType,
+	Kategori,
+	KategoriType,
+	transactions,
+} from "~/db/schema";
+import { drizzle } from "drizzle-orm/d1";
 
-export type DataType = {
-	arah: ArahType;
-	bank: BankType;
-	kategori: KategoriType;
-	date: number;
-	money: number;
-	note: string;
-};
+export interface Env {
+	D1: D1Database;
+}
 
 const inputData = action(async (formData: FormData) => {
 	"use server";
@@ -21,6 +28,7 @@ const inputData = action(async (formData: FormData) => {
 	}
 
 	const data: DataType = {
+		id: nanoid(),
 		arah: pairs[0][1] as ArahType,
 		bank: pairs[1][1] as BankType,
 		kategori: pairs[2][1] as KategoriType,
@@ -29,29 +37,11 @@ const inputData = action(async (formData: FormData) => {
 		note: pairs[5][1] as string,
 	};
 
-	console.log(data);
+	const db = drizzle(env.D1);
+	const res = await db.insert(transactions).values(data);
+
+	console.log(res);
 });
-
-const Banks = {
-	BNI: "bni",
-	Mandiri: "mandiri",
-} as const;
-
-type BankType = (typeof Banks)[keyof typeof Banks];
-
-const Arah = {
-	Masuk: "masuk",
-	Keluar: "keluar",
-} as const;
-
-type ArahType = (typeof Arah)[keyof typeof Arah];
-
-const Kategori = {
-	Sosial: "sosial",
-	Pendidikan: "pendidikan",
-} as const;
-
-type KategoriType = (typeof Kategori)[keyof typeof Kategori];
 
 export default function Home() {
 	const [money, setMoney] = createSignal(0);
