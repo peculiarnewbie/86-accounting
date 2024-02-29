@@ -37,10 +37,12 @@ const inputData = action(async (formData: FormData) => {
 		note: pairs[5][1] as string,
 	};
 
-	const db = drizzle(env.D1);
+	console.log("data", data);
+
+	const db = drizzle(import.meta.env.D1);
 	const res = await db.insert(transactions).values(data);
 
-	console.log(res);
+	console.log("result", res);
 });
 
 export default function Home() {
