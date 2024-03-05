@@ -39,7 +39,10 @@ export async function POST(context: APIContext) {
 
     console.log("going", data);
 
-    const response = await db.insert(transactions).values({ ...data });
+    const response = await db
+        .insert(transactions)
+        .values({ ...data })
+        .returning();
 
     return Response.json(response);
 }
