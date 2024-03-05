@@ -11,7 +11,7 @@ import {
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
 import { drizzle } from "drizzle-orm/d1";
-import { createSignal } from "solid-js";
+import { Suspense, createResource, createSignal } from "solid-js";
 
 // const inputData = async (formData: FormData) => {
 //     "use server";
@@ -41,7 +41,19 @@ import { createSignal } from "solid-js";
 //     console.log("result", res);
 // };
 
+async function postFormData(formData: FormData) {
+    const response = await fetch("/api/test", {
+        method: "POST",
+        body: formData,
+    });
+    const data = await response.json();
+    return data;
+}
+
 export default function InputForm() {
+    const [formData, setFormData] = createSignal<FormData>();
+    const [response] = createResource(formData, postFormData);
+
     const [money, setMoney] = createSignal(0);
     const moneyString = () => parseCurrency(money());
 
@@ -74,10 +86,15 @@ export default function InputForm() {
 
     let moneyRef: HTMLInputElement | undefined;
 
+    function submit(e: SubmitEvent) {
+        e.preventDefault();
+        setFormData(new FormData(e.target as HTMLFormElement));
+    }
+
     return (
         <div class="mx-auto p-4 text-center text-gray-700">
             <form
-                // method="post"
+                onsubmit={submit}
                 class="mx-auto flex max-w-80 flex-col gap-2 rounded-md bg-slate-200 p-4"
             >
                 <div class="flex flex-col items-start ">
@@ -175,6 +192,9 @@ export default function InputForm() {
                     input
                 </button>
             </form>
+            <div>
+                <Suspense>{response() && <p>{response().message}</p>}</Suspense>
+            </div>
         </div>
     );
 }
