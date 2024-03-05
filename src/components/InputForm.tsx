@@ -5,44 +5,11 @@ import {
     type BankType,
     type KategoriType,
     Kategori,
-    type DataType,
-    transactions,
 } from "../../db/schema";
-import { nanoid } from "nanoid";
-import dayjs from "dayjs";
-import { drizzle } from "drizzle-orm/d1";
 import { Suspense, createResource, createSignal } from "solid-js";
 
-// const inputData = async (formData: FormData) => {
-//     "use server";
-
-//     const pairs = [];
-
-//     for (const pair of formData.entries()) {
-//         pairs.push([pair[0], pair[1]]);
-//     }
-
-//     const data: DataType = {
-//         id: nanoid(),
-//         arah: pairs[0][1] as ArahType,
-//         bank: pairs[1][1] as BankType,
-//         kategori: pairs[2][1] as KategoriType,
-//         date: dayjs(pairs[3][1] as string, "YYYY-MM-DD").valueOf(),
-//         money: parseInt(pairs[4][1] as string),
-//         note: pairs[5][1] as string,
-//     };
-
-//     console.log(import.meta.env.D1);
-
-//     const db = drizzle(import.meta.env.D1);
-//     console.log("db", db);
-//     const res = await db.insert(transactions).values(data);
-
-//     console.log("result", res);
-// };
-
 async function postFormData(formData: FormData) {
-    const response = await fetch("/api/test", {
+    const response = await fetch("/api/input", {
         method: "POST",
         body: formData,
     });
@@ -52,7 +19,9 @@ async function postFormData(formData: FormData) {
 
 export default function InputForm() {
     const [formData, setFormData] = createSignal<FormData>();
-    const [response] = createResource(formData, postFormData);
+    // const [response] = createResource(formData, postFormData);
+
+    const [response, setResponse] = createSignal("");
 
     const [money, setMoney] = createSignal(0);
     const moneyString = () => parseCurrency(money());
@@ -86,9 +55,15 @@ export default function InputForm() {
 
     let moneyRef: HTMLInputElement | undefined;
 
-    function submit(e: SubmitEvent) {
+    async function submit(e: SubmitEvent) {
         e.preventDefault();
-        setFormData(new FormData(e.target as HTMLFormElement));
+        const formData = new FormData(e.target as HTMLFormElement);
+        const response = await fetch("/api/input", {
+            method: "POST",
+            body: formData,
+        });
+        const data: string = await response.json();
+        setResponse(data);
     }
 
     return (
@@ -192,11 +167,7 @@ export default function InputForm() {
                     input
                 </button>
             </form>
-            <div>
-                {/* <Suspense>
-                    {response() ? <p>{response().message}</p> : <></>}
-                </Suspense> */}
-            </div>
+            <div>{response()}</div>
         </div>
     );
 }
