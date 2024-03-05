@@ -41,5 +41,5 @@ export async function POST(context: APIContext) {
 
     const response = await db.insert(transactions).values({ ...data });
 
-    return response;
+    return Response.json(response);
 }

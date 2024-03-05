@@ -25,17 +25,13 @@ export default function InputForm() {
         let string = money.toString();
         let parts = [] as string[];
         for (let i = string.length; i > 3; i -= 3) {
-            console.log("part", i);
             parts.push(string.slice(i - 3, i));
         }
         const leftOver = ((string.length + 2) % 3) + 1;
         string = "Rp" + string.slice(0, leftOver);
-        console.log("string", string);
         parts.forEach((part) => {
-            console.log("part", part);
             string += "." + part;
         });
-        console.log(parts);
         return string;
     };
 
@@ -53,8 +49,9 @@ export default function InputForm() {
             method: "POST",
             body: formData,
         });
+        console.log("response", response);
         const data: string = await response.json();
-        console.log(data);
+        console.log("json response", data);
         setResponse(data);
 
         return "ok";
