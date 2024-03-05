@@ -1,8 +1,10 @@
-import { createHandler, StartServer } from "@solidjs/start/server";
+import { createHandler, PageEvent, StartServer } from "@solidjs/start/server";
 
-export default createHandler(() => (
+export default createHandler((context: PageEvent) => (
   <StartServer
+  
     document={({ assets, children, scripts }) => (
+      {}
       <html lang="en">
         <head>
           <meta charset="utf-8" />

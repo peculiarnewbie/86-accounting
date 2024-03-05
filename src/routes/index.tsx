@@ -13,6 +13,7 @@ import {
 	transactions,
 } from "~/db/schema";
 import { drizzle } from "drizzle-orm/d1";
+import { APIEvent, PageEvent, FetchEvent, createHandler, HandlerOptions } from "@solidjs/start/server";
 
 export interface Env {
 	D1: D1Database;
@@ -37,9 +38,13 @@ const inputData = action(async (formData: FormData) => {
 		note: pairs[5][1] as string,
 	};
 
-	console.log("data", data);
+	const lo: FetchEvent
+	lo.locals
+
+	console.log(import.meta.env.D1);
 
 	const db = drizzle(import.meta.env.D1);
+	console.log("db", db);
 	const res = await db.insert(transactions).values(data);
 
 	console.log("result", res);
@@ -64,7 +69,7 @@ export default function Home() {
 		string = "Rp" + string.slice(0, leftOver);
 		console.log("string", string);
 		parts.forEach((part) => {
-			console.log("oart", part);
+			console.log("part", part);
 			string += "." + part;
 		});
 		console.log(parts);

@@ -1,31 +1,19 @@
-import { A } from "@solidjs/router";
-import Counter from "~/components/Counter";
+import { drizzle } from "drizzle-orm/d1";
+import { For, createResource } from "solid-js";
+import { transactions } from "~/db/schema";
 
 export default function About() {
-  return (
-    <main class="text-center mx-auto text-gray-700 p-4">
-      <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase my-16">
-        About Page
-      </h1>
-      <Counter />
-      <p class="mt-8">
-        Visit{" "}
-        <a
-          href="https://solidjs.com"
-          target="_blank"
-          class="text-sky-600 hover:underline"
-        >
-          solidjs.com
-        </a>{" "}
-        to learn how to build Solid apps.
-      </p>
-      <p class="my-4">
-        <A href="/" class="text-sky-600 hover:underline">
-          Home
-        </A>
-        {" - "}
-        <span>About Page</span>
-      </p>
-    </main>
-  );
+	const [entries] = createResource(async () => {
+		const db = drizzle(import.meta.env.D1);
+		const res = await db.select().from(transactions);
+		console.log(res);
+		return await res.json();
+	});
+
+	return (
+		<ul>
+			{entries() &&
+				entries()!.map((transaction) => <li>{transaction.note}</li>)}
+		</ul>
+	);
 }
