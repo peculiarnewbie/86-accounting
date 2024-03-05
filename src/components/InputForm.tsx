@@ -6,16 +6,7 @@ import {
     type KategoriType,
     Kategori,
 } from "../../db/schema";
-import { Suspense, createResource, createSignal } from "solid-js";
-
-async function postFormData(formData: FormData) {
-    const response = await fetch("/api/input", {
-        method: "POST",
-        body: formData,
-    });
-    const data = await response.json();
-    return data;
-}
+import { createSignal } from "solid-js";
 
 export default function InputForm() {
     const [formData, setFormData] = createSignal<FormData>();
@@ -63,7 +54,10 @@ export default function InputForm() {
             body: formData,
         });
         const data: string = await response.json();
+        console.log(data);
         setResponse(data);
+
+        return "ok";
     }
 
     return (
