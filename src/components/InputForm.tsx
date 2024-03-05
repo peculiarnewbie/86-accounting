@@ -193,7 +193,9 @@ export default function InputForm() {
                 </button>
             </form>
             <div>
-                <Suspense>{response() && <p>{response().message}</p>}</Suspense>
+                {/* <Suspense>
+                    {response() ? <p>{response().message}</p> : <></>}
+                </Suspense> */}
             </div>
         </div>
     );
