@@ -3,7 +3,9 @@ import ViewLayout from "../../layouts/ViewLayout.astro";
 import TransactionsView from "../../components/TransactionsView";
 import type { DataType } from "../../../db/schema";
 
-const response = await fetch("/api/transactions");
+const response = await fetch(
+    "https://86-accounting.pages.dev" + "/api/transactions",
+);
 const data = (await response.json()) as DataType[];
 ---
 
