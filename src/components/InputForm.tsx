@@ -8,6 +8,20 @@ import {
 } from "../../db/schema";
 import { createSignal } from "solid-js";
 
+export const parseCurrency = (money: number) => {
+    let string = money.toString();
+    let parts = [] as string[];
+    for (let i = string.length; i > 3; i -= 3) {
+        parts.push(string.slice(i - 3, i));
+    }
+    const leftOver = ((string.length + 2) % 3) + 1;
+    string = "Rp" + string.slice(0, leftOver);
+    parts.forEach((part) => {
+        string += "." + part;
+    });
+    return string;
+};
+
 export default function InputForm() {
     const [formData, setFormData] = createSignal<FormData>();
     // const [response] = createResource(formData, postFormData);
@@ -20,20 +34,6 @@ export default function InputForm() {
     const [arah, setArah] = createSignal<ArahType>(Arah.Masuk);
     const [bank, setBank] = createSignal<BankType>(Banks.BNI);
     const [kategori, setKategori] = createSignal<KategoriType>(Kategori.Sosial);
-
-    const parseCurrency = (money: number) => {
-        let string = money.toString();
-        let parts = [] as string[];
-        for (let i = string.length; i > 3; i -= 3) {
-            parts.push(string.slice(i - 3, i));
-        }
-        const leftOver = ((string.length + 2) % 3) + 1;
-        string = "Rp" + string.slice(0, leftOver);
-        parts.forEach((part) => {
-            string += "." + part;
-        });
-        return string;
-    };
 
     const updateMoney = (e: Event) => {
         const val = (e.target as HTMLInputElement).value;
