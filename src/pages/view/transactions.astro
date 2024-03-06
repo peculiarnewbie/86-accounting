@@ -1,0 +1,12 @@
+---
+import ViewLayout from "../../layouts/ViewLayout.astro";
+import TransactionsView from "../../components/TransactionsView";
+import type { DataType } from "../../../db/schema";
+
+const response = await fetch("/api/transactions");
+const data = (await response.json()) as DataType[];
+---
+
+<ViewLayout title="transactions">
+    <TransactionsView transactions={data} client:load />
+</ViewLayout>
