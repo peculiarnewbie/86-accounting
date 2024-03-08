@@ -1,5 +1,8 @@
 ---
 import DeleteForm from "../../components/DeleteForm";
+import ViewLayout from "../../layouts/ViewLayout.astro";
 ---
 
-<DeleteForm />
+<ViewLayout title="delete">
+    <DeleteForm client:load />
+</ViewLayout>

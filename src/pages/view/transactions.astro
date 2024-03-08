@@ -1,62 +1,61 @@
 ---
 import ViewLayout from "../../layouts/ViewLayout.astro";
-import TransactionsView from "../../components/TransactionsView";
 import type { DataType } from "../../../db/schema";
 import { parseCurrency } from "../../components/InputForm";
 import dayjs from "dayjs";
 
-// const response = await fetch(
-//     "https://86-accounting.pages.dev" + "/api/transactions",
-// );
-// const data = (await response.json()) as DataType[];
+const response = await fetch(
+    "https://86-accounting.pages.dev" + "/api/transactions",
+);
+const data = (await response.json()) as DataType[];
 
-const data: DataType[] = [
-    {
-        id: "123",
-        arah: "masuk",
-        bank: "bni",
-        kategori: "sosial",
-        date: 170000000,
-        money: 100000,
-        note: "nope",
-    },
-    {
-        id: "LGmLWy8GmizbRXtkllF7r",
-        arah: "masuk",
-        bank: "mandiri",
-        kategori: "sosial",
-        date: 1710979200000,
-        money: 100000,
-        note: "hey",
-    },
-    {
-        id: "h0UYuAQdZTS34rbJaoZQm",
-        arah: "masuk",
-        bank: "bni",
-        kategori: "pendidikan",
-        date: 1709424000000,
-        money: 1000,
-        note: "hecc",
-    },
-    {
-        id: "w0OmBmrdwRRyUo7OZXiHh",
-        arah: "masuk",
-        bank: "bni",
-        kategori: "pendidikan",
-        date: 1709424000000,
-        money: 1000,
-        note: "heccee",
-    },
-    {
-        id: "QeWwpWlPDluIb6lk1ilfA",
-        arah: "keluar",
-        bank: "mandiri",
-        kategori: "pendidikan",
-        date: 1709424000000,
-        money: 100,
-        note: "yeah",
-    },
-];
+// const data: DataType[] = [
+//     {
+//         id: "123",
+//         arah: "masuk",
+//         bank: "bni",
+//         kategori: "sosial",
+//         date: 170000000,
+//         money: 100000,
+//         note: "nope",
+//     },
+//     {
+//         id: "LGmLWy8GmizbRXtkllF7r",
+//         arah: "masuk",
+//         bank: "mandiri",
+//         kategori: "sosial",
+//         date: 1710979200000,
+//         money: 100000,
+//         note: "hey",
+//     },
+//     {
+//         id: "h0UYuAQdZTS34rbJaoZQm",
+//         arah: "masuk",
+//         bank: "bni",
+//         kategori: "pendidikan",
+//         date: 1709424000000,
+//         money: 1000,
+//         note: "hecc",
+//     },
+//     {
+//         id: "w0OmBmrdwRRyUo7OZXiHh",
+//         arah: "masuk",
+//         bank: "bni",
+//         kategori: "pendidikan",
+//         date: 1709424000000,
+//         money: 1000,
+//         note: "heccee",
+//     },
+//     {
+//         id: "QeWwpWlPDluIb6lk1ilfA",
+//         arah: "keluar",
+//         bank: "mandiri",
+//         kategori: "pendidikan",
+//         date: 1709424000000,
+//         money: 100,
+//         note: "yeah",
+//     },
+// ];
 ---
 
 <ViewLayout title="transactions">

@@ -1,11 +1,4 @@
-import {
-    sqliteTable,
-    text,
-    integer,
-    uniqueIndex,
-} from "drizzle-orm/sqlite-core";
-
-import { drizzle } from "drizzle-orm/d1";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export interface Env {
     D1: D1Database;
