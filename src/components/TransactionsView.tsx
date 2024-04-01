@@ -125,7 +125,7 @@ function Filters(props: {
                 />
             </div>
             <div
-                class={`flex justify-center gap-4 overflow-y-hidden pt-2 transition-transform duration-700 ${show() ? "h-32 sm:h-20" : "h-0"}`}
+                class={`flex justify-center gap-4 overflow-y-hidden pt-2 transition-all duration-300 ${show() ? "h-32 sm:h-20" : "h-0"}`}
             >
                 <div class="flex flex-col items-center gap-1">
                     <p>Bank:</p>
