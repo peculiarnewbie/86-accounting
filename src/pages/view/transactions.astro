@@ -1,53 +1,14 @@
 ---
-import ViewLayout from "../../layouts/ViewLayout.astro";
 import type { DataType } from "../../../db/schema";
-import { parseCurrency } from "../../components/InputForm";
-import dayjs from "dayjs";
 import TransactionsView from "../../components/TransactionsView";
 import Layout from "../../layouts/Layout.astro";
 
-// const response = await fetch(
-//     "https://86-accounting.pages.dev" + "/api/transactions",
-// );
-// const data = (await response.json()) as DataType[];
+const response = await fetch(
+    location.pathname + "/api/transactions?" + location.search,
+);
+const data = (await response.json()) as DataType[];
 ---
 
 <Layout title="transactions">
-    <TransactionsView client:load />
+    <TransactionsView client:load data={data} />
 </Layout>
-
-<!-- <ViewLayout title="transactions">
-    <div class="mx-auto min-w-[768px] border border-b-0 border-blue-300">
-        <div
-            class="flex divide-x divide-blue-400 border-b border-blue-300 bg-blue-200"
-        >
-            <p class="w-10 p-1">no.</p>
-            <p class="min-w-24 grow p-1">catatan</p>
-            <p class="min-w-36 p-1 md:order-last">jumlah</p>
-            <p class="w-20 p-1">bank</p>
-            <p class="w-20 p-1">arah</p>
-            <p class="w-24 p-1">kategori</p>
-            <div>wha</div>
-            <p class="w-36 p-1">tanggal</p>
-        </div>
-        {
-            data.map((transaction, i) => (
-                <div
-                    class={`flex divide-x divide-blue-400 border-b border-blue-300 ${transaction.arah === "masuk" ? "odd:bg-white even:bg-blue-50" : "odd:bg-red-100 even:bg-red-200"}`}
-                >
-                    <p class="w-10 p-1">{i + 1}.</p>
-                    <p class="min-w-24 grow p-1">{transaction.note}</p>
-                    <p class="min-w-36 p-1 md:order-last">
-                        {parseCurrency(transaction.money)}
-                    </p>
-                    <p class="w-20 p-1">{transaction.bank}</p>
-                    <p class="w-20 p-1">{transaction.arah}</p>
-                    <p class="w-24 p-1">{transaction.kategori}</p>
-                    <p class="w-36 p-1">
-                        {dayjs(transaction.date).format("DD MMMM YYYY")}
-                    </p>
-                </div>
-            ))
-        }
-    </div>
-</ViewLayout> -->

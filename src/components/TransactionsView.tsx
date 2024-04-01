@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { parseCurrency } from "./InputForm";
 import { createStore } from "solid-js/store";
 import Button from "./Button";
+import parseParams from "../helpers/dateHelpers";
 
 type Filter = {
     arah?: ArahType;
@@ -19,12 +20,12 @@ type Filter = {
     kategori?: KategoriType;
 };
 
-export default function TransactionsView() {
+export default function TransactionsView(props: { data: DataType[] }) {
     const [store, setStore] = createStore<{
         transactions: DataType[];
         filteredAndSorted: DataType[];
     }>({
-        transactions: [],
+        transactions: props.data,
         filteredAndSorted: [],
     });
 
@@ -51,61 +52,29 @@ export default function TransactionsView() {
         });
     });
 
-    createEffect(() => {
-        const data: DataType[] = [
+    const fetchTransactions = async (date: dayjs.Dayjs) => {
+        console.log("fetching", date);
+        const response = await fetch(
+            // "https://86-accounting.pages.dev" + "/api/transactions",
+            "/api/transactions",
             {
-                id: "123",
-                arah: "masuk",
-                bank: "bni",
-                kategori: "sosial",
-                date: 170000000,
-                money: 100000,
-                note: "nope",
+                method: "POST",
+                body: JSON.stringify({
+                    date: date.valueOf(),
+                }),
             },
-            {
-                id: "LGmLWy8GmizbRXtkllF7r",
-                arah: "masuk",
-                bank: "mandiri",
-                kategori: "sosial",
-                date: 1710979200000,
-                money: 100000,
-                note: "hey",
-            },
-            {
-                id: "h0UYuAQdZTS34rbJaoZQm",
-                arah: "masuk",
-                bank: "bni",
-                kategori: "pendidikan",
-                date: 1709424000000,
-                money: 1000,
-                note: "hecc",
-            },
-            {
-                id: "w0OmBmrdwRRyUo7OZXiHh",
-                arah: "masuk",
-                bank: "bni",
-                kategori: "pendidikan",
-                date: 1709424000000,
-                money: 1000,
-                note: "heccee",
-            },
-            {
-                id: "QeWwpWlPDluIb6lk1ilfA",
-                arah: "keluar",
-                bank: "mandiri",
-                kategori: "pendidikan",
-                date: 1709424000000,
-                money: 100,
-                note: "yeah",
-            },
-        ];
+        );
+        const data = (await response.json()) as DataType[];
         setStore({ transactions: data });
+    };
 
+    createEffect(() => {
         const searchParams = new URLSearchParams(location.search);
-        const month = searchParams.get("month") ?? dayjs().month();
-        const year = searchParams.get("year") ?? dayjs().year();
-        const date = dayjs(`${year}-${month}`, "YYYY-MM").valueOf();
-        setDate(new Date(date));
+        const date = parseParams(searchParams);
+
+        setDate(new Date(date.valueOf()));
+
+        fetchTransactions(date);
     });
 
     return (
@@ -171,7 +140,7 @@ function Filters(props: {
         <div class="flex flex-col items-center p-4">
             <div class="flex w-full justify-between">
                 <Button onClick={() => setShow(!show())} active={show()}>
-                    Filter
+                    Filters
                 </Button>
                 <input
                     type="month"
