@@ -3,9 +3,7 @@ import type { DataType } from "../../../db/schema";
 import TransactionsView from "../../components/TransactionsView";
 import Layout from "../../layouts/Layout.astro";
 
-const response = await fetch(
-    location.pathname + "/api/transactions?" + location.search,
-);
+const response = await fetch(Astro.request.url.replace("view", "api"));
 const data = (await response.json()) as DataType[];
 ---
 

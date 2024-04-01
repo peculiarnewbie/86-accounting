@@ -13,8 +13,6 @@ export async function GET(context: APIContext) {
     const date = parseParams(searchParams);
     const nextMonth = date.add(1, "month");
 
-    console.log("date", date);
-
     const db = drizzle(runtime.env.D1);
 
     const data = (await db
