@@ -3,62 +3,20 @@ import ViewLayout from "../../layouts/ViewLayout.astro";
 import type { DataType } from "../../../db/schema";
 import { parseCurrency } from "../../components/InputForm";
 import dayjs from "dayjs";
+import TransactionsView from "../../components/TransactionsView";
+import Layout from "../../layouts/Layout.astro";
 
-const response = await fetch(
-    "https://86-accounting.pages.dev" + "/api/transactions",
-);
-const data = (await response.json()) as DataType[];
-
-// const data: DataType[] = [
-//     {
-//         id: "123",
-//         arah: "masuk",
-//         bank: "bni",
-//         kategori: "sosial",
-//         date: 170000000,
-//         money: 100000,
-//         note: "nope",
-//     },
-//     {
-//         id: "LGmLWy8GmizbRXtkllF7r",
-//         arah: "masuk",
-//         bank: "mandiri",
-//         kategori: "sosial",
-//         date: 1710979200000,
-//         money: 100000,
-//         note: "hey",
-//     },
-//     {
-//         id: "h0UYuAQdZTS34rbJaoZQm",
-//         arah: "masuk",
-//         bank: "bni",
-//         kategori: "pendidikan",
-//         date: 1709424000000,
-//         money: 1000,
-//         note: "hecc",
-//     },
-//     {
-//         id: "w0OmBmrdwRRyUo7OZXiHh",
-//         arah: "masuk",
-//         bank: "bni",
-//         kategori: "pendidikan",
-//         date: 1709424000000,
-//         money: 1000,
-//         note: "heccee",
-//     },
-//     {
-//         id: "QeWwpWlPDluIb6lk1ilfA",
-//         arah: "keluar",
-//         bank: "mandiri",
-//         kategori: "pendidikan",
-//         date: 1709424000000,
-//         money: 100,
-//         note: "yeah",
-//     },
-// ];
+// const response = await fetch(
+//     "https://86-accounting.pages.dev" + "/api/transactions",
+// );
+// const data = (await response.json()) as DataType[];
 ---
 
-<ViewLayout title="transactions">
+<Layout title="transactions">
+    <TransactionsView client:load />
+</Layout>
+
+<!-- <ViewLayout title="transactions">
     <div class="mx-auto min-w-[768px] border border-b-0 border-blue-300">
         <div
             class="flex divide-x divide-blue-400 border-b border-blue-300 bg-blue-200"
@@ -69,7 +27,7 @@ const data = (await response.json()) as DataType[];
             <p class="w-20 p-1">bank</p>
             <p class="w-20 p-1">arah</p>
             <p class="w-24 p-1">kategori</p>
-      <div>wha</div>
+            <div>wha</div>
             <p class="w-36 p-1">tanggal</p>
         </div>
         {
@@ -92,4 +50,4 @@ const data = (await response.json()) as DataType[];
             ))
         }
     </div>
-</ViewLayout>
+</ViewLayout> -->
