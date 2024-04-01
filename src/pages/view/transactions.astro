@@ -2,11 +2,17 @@
 import type { DataType } from "../../../db/schema";
 import TransactionsView from "../../components/TransactionsView";
 import Layout from "../../layouts/Layout.astro";
+import { parseParams } from "../../helpers/dateHelpers";
+import dayjs from "dayjs";
+
+const url = new URL(Astro.request.url);
+const searchParams = new URLSearchParams(url.search);
+const date = parseParams(searchParams);
 
 const response = await fetch(Astro.request.url.replace("view", "api"));
 const data = (await response.json()) as DataType[];
 ---
 
 <Layout title="transactions">
-    <TransactionsView client:load data={data} />
+    <TransactionsView client:load data={data} date={dayjs(date, "YYYY-MM")} />
 </Layout>

@@ -12,7 +12,6 @@ import dayjs from "dayjs";
 import { parseCurrency } from "./InputForm";
 import { createStore } from "solid-js/store";
 import Button from "./Button";
-import parseParams from "../helpers/dateHelpers";
 
 type Filter = {
     arah?: ArahType;
@@ -20,7 +19,10 @@ type Filter = {
     kategori?: KategoriType;
 };
 
-export default function TransactionsView(props: { data: DataType[] }) {
+export default function TransactionsView(props: {
+    data: DataType[];
+    date: dayjs.Dayjs;
+}) {
     const [store, setStore] = createStore<{
         transactions: DataType[];
         filteredAndSorted: DataType[];
@@ -28,9 +30,7 @@ export default function TransactionsView(props: { data: DataType[] }) {
         transactions: props.data,
         filteredAndSorted: [],
     });
-
     const [filter, setFilter] = createSignal<Filter>({});
-    const [date, setDate] = createSignal<Date>(new Date());
 
     const updateFilter = (update: Filter) => {
         setFilter({ ...filter(), ...update });
@@ -52,38 +52,13 @@ export default function TransactionsView(props: { data: DataType[] }) {
         });
     });
 
-    const fetchTransactions = async (date: dayjs.Dayjs) => {
-        console.log("fetching", date);
-        const response = await fetch(
-            // "https://86-accounting.pages.dev" + "/api/transactions",
-            "/api/transactions",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    date: date.valueOf(),
-                }),
-            },
-        );
-        const data = (await response.json()) as DataType[];
-        setStore({ transactions: data });
-    };
-
-    createEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const date = parseParams(searchParams);
-
-        setDate(new Date(date.valueOf()));
-
-        fetchTransactions(date);
-    });
-
     return (
         <div class="container mx-auto items-center">
             {" "}
             <Filters
                 updateFilter={updateFilter}
                 filter={filter()}
-                date={date()}
+                date={props.date}
             />
             <For
                 each={store.filteredAndSorted}
@@ -125,7 +100,7 @@ export default function TransactionsView(props: { data: DataType[] }) {
 function Filters(props: {
     updateFilter: (update: Filter) => void;
     filter: Filter;
-    date: Date;
+    date: dayjs.Dayjs;
 }) {
     const [show, setShow] = createSignal(false);
 
@@ -133,7 +108,7 @@ function Filters(props: {
         const value = (e.target as HTMLInputElement).value;
         const date = dayjs(value, "YYYY-MM");
 
-        window.location.search = `?month=${date.month()}&year=${date.year()}`;
+        window.location.search = `?month=${date.month() + 1}&year=${date.year()}`;
     };
 
     return (
@@ -145,12 +120,12 @@ function Filters(props: {
                 <input
                     type="month"
                     name="date"
-                    value={dayjs(props.date).format("YYYY-MM")}
+                    value={props.date.format("YYYY-MM")}
                     onchange={changeMonth}
                 />
             </div>
             <div
-                class={`flex justify-center gap-4 overflow-y-hidden pt-2 transition-all duration-700 ${show() ? "h-32 sm:h-20" : "h-0"}`}
+                class={`flex justify-center gap-4 overflow-y-hidden pt-2 transition-transform duration-700 ${show() ? "h-32 sm:h-20" : "h-0"}`}
             >
                 <div class="flex flex-col items-center gap-1">
                     <p>Bank:</p>

@@ -2,7 +2,7 @@ import type { APIContext } from "astro";
 import { drizzle } from "drizzle-orm/d1";
 import { transactions, type DataType } from "../../../db/schema";
 import { between } from "drizzle-orm";
-import parseParams from "../../helpers/dateHelpers";
+import { parseParams } from "../../helpers/dateHelpers";
 
 export async function GET(context: APIContext) {
     const runtime = context.locals.runtime;
