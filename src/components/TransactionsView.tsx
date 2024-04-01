@@ -21,7 +21,7 @@ type Filter = {
 
 export default function TransactionsView(props: {
     data: DataType[];
-    date: dayjs.Dayjs;
+    date: number;
 }) {
     const [store, setStore] = createStore<{
         transactions: DataType[];
@@ -100,7 +100,7 @@ export default function TransactionsView(props: {
 function Filters(props: {
     updateFilter: (update: Filter) => void;
     filter: Filter;
-    date: dayjs.Dayjs;
+    date: number;
 }) {
     const [show, setShow] = createSignal(false);
 
@@ -120,7 +120,7 @@ function Filters(props: {
                 <input
                     type="month"
                     name="date"
-                    value={props.date.format("YYYY-MM")}
+                    value={dayjs(props.date).format("YYYY-MM")}
                     onchange={changeMonth}
                 />
             </div>

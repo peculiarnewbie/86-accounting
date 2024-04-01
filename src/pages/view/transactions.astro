@@ -14,5 +14,5 @@ const data = (await response.json()) as DataType[];
 ---
 
 <Layout title="transactions">
-    <TransactionsView client:load data={data} date={dayjs(date, "YYYY-MM")} />
+    <TransactionsView client:load data={data} date={date.valueOf()} />
 </Layout>

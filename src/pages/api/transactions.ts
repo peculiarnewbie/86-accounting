@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { transactions, type DataType } from "../../../db/schema";
 import { between } from "drizzle-orm";
 import { parseParams } from "../../helpers/dateHelpers";
+import { dummyData } from "../../../db/dummyData";
 
 export async function GET(context: APIContext) {
     const runtime = context.locals.runtime;
@@ -21,6 +22,8 @@ export async function GET(context: APIContext) {
         .where(
             between(transactions.date, date.valueOf(), nextMonth.valueOf()),
         )) as DataType[];
+
+    // const data = dummyData;
 
     return Response.json(data);
 }
