@@ -19,6 +19,12 @@ type Filter = {
     kategori?: KategoriType;
 };
 
+type Total = {
+    masuk?: number;
+    keluar?: number;
+    total: number;
+};
+
 export default function TransactionsView(props: {
     data: DataType[];
     date: number;
@@ -30,7 +36,11 @@ export default function TransactionsView(props: {
         transactions: props.data,
         filteredAndSorted: [],
     });
+
     const [filter, setFilter] = createSignal<Filter>({});
+    const [total, setTotal] = createSignal<Total>({ total: 0 });
+
+    let totalContainer!: HTMLDivElement;
 
     const updateFilter = (update: Filter) => {
         setFilter({ ...filter(), ...update });
@@ -50,10 +60,29 @@ export default function TransactionsView(props: {
             transactions: store.transactions,
             filteredAndSorted: filtered,
         });
+
+        let newTotal: Total = { total: 0 };
+        filtered.forEach((transaction) => {
+            if (transaction.arah === "masuk") {
+                newTotal.masuk = newTotal.masuk
+                    ? newTotal.masuk + transaction.money
+                    : transaction.money;
+                newTotal.total += transaction.money;
+            } else {
+                newTotal.keluar = newTotal.keluar
+                    ? newTotal.keluar + transaction.money
+                    : transaction.money;
+                newTotal.total -= transaction.money;
+            }
+        });
+        setTotal(newTotal);
     });
 
     return (
-        <div class="container mx-auto items-center">
+        <div
+            class="container mx-auto items-center divide-y-[1px]"
+            style={{ "padding-bottom": "100px" }}
+        >
             {" "}
             <Filters
                 updateFilter={updateFilter}
@@ -70,29 +99,61 @@ export default function TransactionsView(props: {
             >
                 {(transaction, i) => (
                     <div
-                        class={`flex justify-between p-2 odd:bg-slate-100 ${transaction.arah === "masuk" ? "" : "text-red-700"} `}
+                        class={`flex justify-between p-2 ${transaction.arah === "masuk" ? "" : "text-red-700"} `}
                     >
                         <div class="flex flex-col">
-                            <div class="opacity-50">{transaction.kategori}</div>
-                            <div class="text-lg font-bold">
-                                {transaction.note}
+                            <div class="">
+                                {dayjs(transaction.date).format("DD MMM")}
                             </div>
 
-                            <div class="pt-1 opacity-80">
-                                {dayjs(transaction.date).format("DD MMMM YYYY")}
+                            <div class=" text-lg font-semibold">
+                                {transaction.note}
+                            </div>
+                            <div class="-mt-1 text-sm opacity-50">
+                                {transaction.kategori}
                             </div>
                         </div>
                         <div class="flex flex-col items-end justify-center ">
-                            <div class="opacity-50">{transaction.bank}</div>
-                            <div class="text-lg font-semibold">
+                            <div class="text-lg font-bold">
                                 {transaction.arah === "masuk" ? "" : "-"}
                                 {parseCurrency(transaction.money)}
                             </div>
+                            <div class="opacity-50">{transaction.bank}</div>
                         </div>
                     </div>
                 )}
             </For>
-            <p>{JSON.stringify(filter())}</p>
+            <div
+                class="fixed bottom-0 left-0 w-full bg-slate-100 p-2"
+                ref={totalContainer}
+            >
+                <div class="container mx-auto flex justify-between">
+                    <div>
+                        <div class="flex gap-1">
+                            <p>Masuk:</p>
+                            <div class="flex items-center justify-center">
+                                {parseCurrency(total().masuk ?? 0)}
+                            </div>
+                        </div>
+
+                        <div class="flex gap-1 text-red-700">
+                            <p>Keluar:</p>
+                            <div class="flex items-center justify-center">
+                                {parseCurrency(total().keluar ?? 0)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-end">
+                        <p>Total</p>
+                        <div class="flex items-center justify-center font-semibold">
+                            {total().total < 0
+                                ? `-${parseCurrency(Math.abs(total().total))}`
+                                : parseCurrency(total().total)}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
