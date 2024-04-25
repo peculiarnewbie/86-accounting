@@ -5,7 +5,6 @@ import { eq } from "drizzle-orm";
 import { dummyData } from "../../../db/dummyData";
 
 export async function GET(context: APIContext) {
-    console.log("getTransaction");
     const runtime = context.locals.runtime;
 
     if (runtime.env.DEV) return Response.json(dummyData[3]);

@@ -8,6 +8,9 @@ import { dummyData } from "../../../db/dummyData";
 export async function GET(context: APIContext) {
     const runtime = context.locals.runtime;
 
+    if (runtime.env.DEV) {
+        return Response.json(dummyData);
+    }
     const url = new URL(context.request.url);
     const searchParams = new URLSearchParams(url.search);
 
@@ -16,25 +19,15 @@ export async function GET(context: APIContext) {
 
     const db = drizzle(runtime.env.D1);
 
-    let data: DataType[] = [];
-
-    if (!runtime.env.DEV) {
-        data = (await db
-            .select()
-            .from(transactions)
-            .where(
-                and(
-                    between(
-                        transactions.date,
-                        date.valueOf(),
-                        nextMonth.valueOf(),
-                    ),
-                    not(eq(transactions.date, nextMonth.valueOf())),
-                ),
-            )) as DataType[];
-    } else {
-        data = dummyData;
-    }
+    let data: DataType[] = (await db
+        .select()
+        .from(transactions)
+        .where(
+            and(
+                between(transactions.date, date.valueOf(), nextMonth.valueOf()),
+                not(eq(transactions.date, nextMonth.valueOf())),
+            ),
+        )) as DataType[];
 
     return Response.json(data);
 }
