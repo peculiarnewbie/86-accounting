@@ -28,7 +28,7 @@ export async function POST(context: APIContext) {
     }
 
     const data: DataType = {
-        id: nanoid(),
+        id: pairs[6][1] as string,
         arah: pairs[0][1] as ArahType,
         bank: pairs[1][1] as BankType,
         kategori: pairs[2][1] as KategoriType,
@@ -39,9 +39,15 @@ export async function POST(context: APIContext) {
 
     console.log("going", data);
 
+    const { id, ...rest } = data;
+
     const response = await db
         .insert(transactions)
         .values({ ...data })
+        .onConflictDoUpdate({
+            target: transactions.id,
+            set: { ...rest },
+        })
         .returning();
 
     return Response.json(response);

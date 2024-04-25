@@ -1,0 +1,19 @@
+---
+import type { DataType } from "../../db/schema";
+import InputForm from "../components/InputForm";
+import Layout from "../layouts/Layout.astro";
+
+const url = new URL(Astro.request.url);
+const searchParams = new URLSearchParams(url.search);
+const id = searchParams.get("id");
+
+const response = await fetch(
+    Astro.request.url.replace("edit", `api/getTransaction?id=${id}`),
+);
+
+const data = (await response.json()) as DataType;
+---
+
+<Layout title="edit">
+    <InputForm client:load prevData={data} />
+</Layout>

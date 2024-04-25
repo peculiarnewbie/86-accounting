@@ -7,8 +7,9 @@ import {
     Kategori,
     type DataType,
 } from "../../db/schema";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import Button from "./Button";
+import { nanoid } from "nanoid";
 
 export const parseCurrency = (money: number) => {
     let string = money.toString();
@@ -25,7 +26,6 @@ export const parseCurrency = (money: number) => {
 };
 
 export default function InputForm(props: { prevData?: DataType }) {
-    const isEditing = props.prevData ? true : false;
     const [response, setResponse] = createSignal("");
 
     const [money, setMoney] = createSignal(0);
@@ -45,7 +45,9 @@ export default function InputForm(props: { prevData?: DataType }) {
     async function submit(e: SubmitEvent) {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
-        if (isEditing) formData.append("isEditing", "true");
+
+        if (props.prevData) formData.append("id", props.prevData.id);
+        else formData.append("id", nanoid());
 
         const response = await fetch("/api/input", {
             method: "POST",
@@ -59,6 +61,15 @@ export default function InputForm(props: { prevData?: DataType }) {
 
         return "ok";
     }
+
+    createEffect(() => {
+        if (props.prevData) {
+            setMoney(props.prevData.money);
+            setArah(props.prevData.arah);
+            setBank(props.prevData.bank);
+            setKategori(props.prevData.kategori);
+        }
+    });
 
     return (
         <div class="container mx-auto p-4 text-center text-gray-700">

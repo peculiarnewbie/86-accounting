@@ -13,6 +13,7 @@ import { parseCurrency } from "./InputForm";
 import { createStore } from "solid-js/store";
 import Button from "./Button";
 import DateInput from "./DateInput";
+import TransactionItem from "./TransactionItem";
 
 type Filter = {
     arah?: ArahType;
@@ -29,7 +30,9 @@ type Total = {
 export default function TransactionsView(props: {
     data: DataType[];
     date: number;
+    editing?: boolean;
 }) {
+    console.log(props.editing);
     const [store, setStore] = createStore<{
         transactions: DataType[];
         filteredAndSorted: DataType[];
@@ -99,29 +102,10 @@ export default function TransactionsView(props: {
                 }
             >
                 {(transaction, i) => (
-                    <div
-                        class={`flex justify-between p-2 ${transaction.arah === "masuk" ? "" : "text-red-700"} `}
-                    >
-                        <div class="flex flex-col">
-                            <div class="">
-                                {dayjs(transaction.date).format("DD MMM")}
-                            </div>
-
-                            <div class=" text-lg font-semibold">
-                                {transaction.note}
-                            </div>
-                            <div class="-mt-1 text-sm opacity-50">
-                                {transaction.kategori}
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-end justify-center ">
-                            <div class="text-lg font-bold">
-                                {transaction.arah === "masuk" ? "" : "-"}
-                                {parseCurrency(transaction.money)}
-                            </div>
-                            <div class="opacity-50">{transaction.bank}</div>
-                        </div>
-                    </div>
+                    <TransactionItem
+                        transaction={transaction}
+                        editing={props.editing}
+                    />
                 )}
             </For>
             <div

@@ -18,8 +18,6 @@ export async function GET(context: APIContext) {
 
     let data: DataType[] = [];
 
-    console.log(runtime.env.DEV);
-
     if (!runtime.env.DEV) {
         data = (await db
             .select()

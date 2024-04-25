@@ -10,8 +10,20 @@ const date = parseParams(searchParams);
 
 const response = await fetch(Astro.request.url.replace("view", "api"));
 const data = (await response.json()) as DataType[];
+
+let editing = false;
+if (searchParams.get("edit")) {
+    // TODO: give middleware to check if admin instead
+    // then let admin edit on client side
+    editing = true;
+}
 ---
 
 <Layout title="transactions">
-    <TransactionsView client:load data={data} date={date.valueOf()} />
+    <TransactionsView
+        client:load
+        data={data}
+        date={date.valueOf()}
+        editing={editing}
+    />
 </Layout>
