@@ -2,26 +2,39 @@
 import { dummyData } from "../../../db/dummyData";
 import Card from "../../components/Card.astro";
 import Layout from "../../layouts/Layout.astro";
+import DateInput from "../../components/DateInput";
 
 const dummyTransaction = dummyData[0];
 const dummyTransaction1 = dummyData[2];
+
+const response = await fetch(
+    `${Astro.request.url.replace("view", "api")}/view`,
+);
+
+// TODO: get last transaction from api
+// const { lastBNI, lastMandiri } = (await response.json()) as any;
 ---
 
 <Layout title="account">
     <div class="container mx-auto items-center p-4">
         <div class="h-20"></div>
-        <div class="flex w-full flex-col items-center gap-4 sm:flex-row">
+        <div class="flex w-full flex-col items-center gap-4 md:flex-row">
             <Card
                 title="BNI"
                 value={200_000}
                 lastTransaction={dummyTransaction}
             />
-
             <Card
                 title="Mandiri"
                 value={420_000}
                 lastTransaction={dummyTransaction1}
             />
+        </div>
+        <div
+            class="ml-auto mr-auto flex w-fit flex-col items-center pt-4 md:ml-0 md:items-start"
+        >
+            <p>show transactions</p>
+            <DateInput client:load date={new Date().getTime()} />
         </div>
     </div>
 </Layout>

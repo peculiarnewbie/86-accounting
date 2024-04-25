@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { parseCurrency } from "./InputForm";
 import { createStore } from "solid-js/store";
 import Button from "./Button";
+import DateInput from "./DateInput";
 
 type Filter = {
     arah?: ArahType;
@@ -165,25 +166,13 @@ function Filters(props: {
 }) {
     const [show, setShow] = createSignal(false);
 
-    const changeMonth = (e: Event) => {
-        const value = (e.target as HTMLInputElement).value;
-        const date = dayjs(value, "YYYY-MM");
-
-        window.location.search = `?month=${date.month() + 1}&year=${date.year()}`;
-    };
-
     return (
         <div class="flex flex-col items-center p-4">
             <div class="flex w-full justify-between">
                 <Button onClick={() => setShow(!show())} active={show()}>
                     Filters
                 </Button>
-                <input
-                    type="month"
-                    name="date"
-                    value={dayjs(props.date).format("YYYY-MM")}
-                    onchange={changeMonth}
-                />
+                <DateInput date={props.date} />
             </div>
             <div
                 class={`flex justify-center gap-4 overflow-y-hidden pt-2 transition-all duration-300 ${show() ? "h-32 sm:h-20" : "h-0"}`}
