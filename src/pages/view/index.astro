@@ -1,0 +1,27 @@
+---
+import { dummyData } from "../../../db/dummyData";
+import Card from "../../components/Card.astro";
+import Layout from "../../layouts/Layout.astro";
+
+const dummyTransaction = dummyData[0];
+const dummyTransaction1 = dummyData[2];
+---
+
+<Layout title="account">
+    <div class="container mx-auto items-center p-4">
+        <div class="h-20"></div>
+        <div class="flex w-full flex-col items-center gap-4 sm:flex-row">
+            <Card
+                title="BNI"
+                value={200_000}
+                lastTransaction={dummyTransaction}
+            />
+
+            <Card
+                title="Mandiri"
+                value={420_000}
+                lastTransaction={dummyTransaction1}
+            />
+        </div>
+    </div>
+</Layout>

@@ -16,17 +16,27 @@ export async function GET(context: APIContext) {
 
     const db = drizzle(runtime.env.D1);
 
-    const data = (await db
-        .select()
-        .from(transactions)
-        .where(
-            and(
-                between(transactions.date, date.valueOf(), nextMonth.valueOf()),
-                not(eq(transactions.date, nextMonth.valueOf())),
-            ),
-        )) as DataType[];
+    let data: DataType[] = [];
 
-    // const data = dummyData;
+    console.log(runtime.env.DEV);
+
+    if (!runtime.env.DEV) {
+        data = (await db
+            .select()
+            .from(transactions)
+            .where(
+                and(
+                    between(
+                        transactions.date,
+                        date.valueOf(),
+                        nextMonth.valueOf(),
+                    ),
+                    not(eq(transactions.date, nextMonth.valueOf())),
+                ),
+            )) as DataType[];
+    } else {
+        data = dummyData;
+    }
 
     return Response.json(data);
 }

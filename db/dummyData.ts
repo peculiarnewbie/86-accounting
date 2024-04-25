@@ -1,4 +1,6 @@
-export const dummyData = [
+import type { DataType } from "./schema";
+
+export const dummyData: DataType[] = [
     {
         id: "1",
         arah: "masuk",

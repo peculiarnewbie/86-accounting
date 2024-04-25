@@ -3,7 +3,6 @@ import type { DataType } from "../../../db/schema";
 import TransactionsView from "../../components/TransactionsView";
 import Layout from "../../layouts/Layout.astro";
 import { parseParams } from "../../helpers/dateHelpers";
-import dayjs from "dayjs";
 
 const url = new URL(Astro.request.url);
 const searchParams = new URLSearchParams(url.search);
