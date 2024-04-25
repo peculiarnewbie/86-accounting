@@ -8,7 +8,7 @@ const searchParams = new URLSearchParams(url.search);
 const id = searchParams.get("id");
 
 const response = await fetch(
-    Astro.request.url.replace("edit", `api/getTransaction?id=${id}`),
+    Astro.request.url.replace("edit", `api/getTransaction`),
 );
 
 const data = (await response.json()) as DataType;
