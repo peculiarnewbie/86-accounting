@@ -55,7 +55,7 @@ export const transactions = sqliteTable("transactions", {
 export type Transaction = typeof transactions.$inferSelect; // return type when queried
 export type NewTransaction = typeof transactions.$inferInsert;
 
-export const banks = sqliteTable("bank", {
+export const banks = sqliteTable("banks", {
     id: text("id").notNull().primaryKey(),
     name: text("name").notNull(),
     money: integer("money").notNull(),
