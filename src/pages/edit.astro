@@ -47,15 +47,15 @@ const searchParams = new URLSearchParams(url.search);
 
 const id = searchParams.get("id");
 
-if (!id) return Response.json({});
-data = (
-    (await db
-        .select()
-        .from(transactions)
-        .where(eq(transactions.id, id))) as DataType[]
-)[0];
-
-return Response.json(data);
+if (!id) data = {} as DataType;
+else {
+    data = (
+        (await db
+            .select()
+            .from(transactions)
+            .where(eq(transactions.id, id))) as DataType[]
+    )[0];
+}
 ---
 
 <Layout title="edit">
