@@ -31,11 +31,25 @@ export async function GET(context: APIContext): Promise<Response> {
 
     try {
         const codeVerifier = generateCodeVerifier();
-        console.log("code", codeVerifier);
-        const tokens: GoogleTokens = await google.validateAuthorizationCode(
-            code,
-            codeVerifier,
-        );
+        let tokens: GoogleTokens;
+        try {
+            tokens = await google.validateAuthorizationCode(code, codeVerifier);
+        } catch (e) {
+            if (
+                e instanceof OAuth2RequestError &&
+                e.message === "bad_verification_code"
+            ) {
+                // invalid code
+                return new Response(null, {
+                    status: 400,
+                });
+            }
+            return new Response(null, {
+                status: 500,
+                //@ts-expect-error
+                error: e,
+            });
+        }
         console.log("tokens", tokens);
         const googleUserResponse = await fetch(
             "https://openidconnect.googleapis.com/v1/userinfo",

@@ -13,7 +13,7 @@ export async function GET(context: APIContext): Promise<Response> {
         context.locals.runtime.env.GOOGLE_REDIRECT_URI,
     );
     const url = await google.createAuthorizationURL(state, codeVerifier, {
-        scopes: ["email"],
+        scopes: ["profile", "email"],
     });
 
     context.cookies.set("google_oauth_state", state, {
