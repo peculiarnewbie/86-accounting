@@ -2,9 +2,11 @@ import type { APIContext } from "astro";
 import { getLuciaFromD1 } from "../../helpers/auth";
 
 export async function GET(context: APIContext) {
+    console.log("in getUserEmail");
     const { db, lucia } = getLuciaFromD1(context.locals.runtime.env.D1);
     const sessionId =
         context.cookies.get(lucia.sessionCookieName)?.value ?? null;
+    console.log(sessionId);
     if (!sessionId) {
         return new Response(null, {
             status: 401,
