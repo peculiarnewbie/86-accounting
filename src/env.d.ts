@@ -9,6 +9,7 @@ type ENV = {
     GOOGLE_CLIENT_SECRET: string;
     GOOGLE_REDIRECT_URI: string;
     GOOGLE_VERIFIER: string;
+    AUTHENTICATED_EMAILS: string;
 };
 
 type Runtime = import("@astrojs/cloudflare").AdvancedRuntime<ENV>;
