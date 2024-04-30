@@ -2,6 +2,7 @@ import type { APIContext } from "astro";
 import { drizzle } from "drizzle-orm/d1";
 import { nanoid } from "nanoid";
 import {
+    banks,
     transactions,
     type ArahType,
     type BankType,
@@ -9,6 +10,7 @@ import {
     type KategoriType,
 } from "../../../db/schema";
 import dayjs from "dayjs";
+import { eq } from "drizzle-orm";
 
 export async function POST(context: APIContext) {
     console.log("sup");
@@ -41,14 +43,51 @@ export async function POST(context: APIContext) {
 
     const { id, ...rest } = data;
 
-    const response = await db
-        .insert(transactions)
-        .values({ ...data })
-        .onConflictDoUpdate({
-            target: transactions.id,
-            set: { ...rest },
-        })
-        .returning();
+    const response = await db.transaction(async (tx) => {
+        let moneyUpdate = data.money;
+
+        const bank = await tx
+            .select()
+            .from(banks)
+            .where(eq(banks.name, data.bank));
+        const currentMoney = bank[0].money;
+
+        const transaction = await tx
+            .select()
+            .from(transactions)
+            .where(eq(transactions.id, id));
+
+        // updating transaction
+        if (transaction.length > 0) {
+            tx.update(transactions)
+                .set({ ...rest })
+                .where(eq(transactions.id, id));
+
+            if (transaction[0].arah === data.arah) {
+                moneyUpdate = data.money - (transaction[0].money ?? 0);
+            } else {
+                moneyUpdate = data.money + (transaction[0].money ?? 0);
+            }
+        } else {
+            tx.insert(transactions)
+                .values({ ...data })
+                .onConflictDoUpdate({
+                    target: transactions.id,
+                    set: { ...rest },
+                })
+                .returning();
+        }
+
+        if (data.arah === "keluar") {
+            moneyUpdate = -moneyUpdate;
+        }
+
+        const newMoney = currentMoney + moneyUpdate;
+        tx.update(banks)
+            .set({ money: newMoney })
+            .where(eq(banks.name, data.bank))
+            .returning();
+    });
 
     return Response.json(response);
 }
