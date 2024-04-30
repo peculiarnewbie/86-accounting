@@ -1,6 +1,7 @@
+import type { APIContext } from "astro";
 import { getLuciaFromD1 } from "../../helpers/auth";
 
-export default async function GET(context: any) {
+export async function GET(context: APIContext) {
     const { db, lucia } = getLuciaFromD1(context.locals.runtime.env.D1);
     const sessionId =
         context.cookies.get(lucia.sessionCookieName)?.value ?? null;
@@ -10,13 +11,14 @@ export default async function GET(context: any) {
         });
     }
     const { session, user } = await lucia.validateSession(sessionId);
-    if (!session) {
-        return context.redirect("/login/google");
-    }
+
+    console.log(session, user);
 
     const authenticatedEmails: string[] = JSON.parse(
         context.locals.runtime.env.AUTHENTICATED_EMAILS,
     );
+
+    console.log(authenticatedEmails);
 
     if (
         !user ||
