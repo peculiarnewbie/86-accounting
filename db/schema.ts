@@ -45,10 +45,10 @@ export type KategoriType = (typeof Kategori)[keyof typeof Kategori];
 export const transactions = sqliteTable("transactions", {
     id: text("id").primaryKey(),
     arah: text("arah"),
-    bank: text("bank"),
+    bank: text("bank").notNull(),
     kategori: text("kategori"),
     date: integer("date"),
-    money: integer("money"),
+    money: integer("money").notNull(),
     note: text("note"),
 });
 

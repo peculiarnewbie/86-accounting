@@ -66,32 +66,46 @@ export default function TransactionItem(props: {
 }
 
 function ConfirmDeleteModal(props: { id: string; onCancel: () => void }) {
-    const onConfirm = () => {
-        console.log("delete", props.id);
+    const [isLoading, setIsLoading] = createSignal(false);
+    const onConfirm = async () => {
+        setIsLoading(true);
+
+        const response = await fetch(`/api/delete`, {
+            method: "POST",
+            body: JSON.stringify({ id: props.id }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        setIsLoading(false);
+        console.log(response);
     };
     return (
         <div class="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-            <div class=" rounded-md bg-white text-black">
-                <div class="flex items-center justify-between p-4">
-                    <div class="text-xcenter text-old text-center">
-                        Are you sure you want to delete this transaction?
+            {isLoading() && (
+                <div class=" rounded-md bg-white text-black">
+                    <div class="flex items-center justify-between p-4">
+                        <div class="text-xcenter text-old text-center">
+                            Are you sure you want to delete this transaction?
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 p-4">
+                        <button
+                            class="w-full rounded-md bg-red-200 p-1 "
+                            onclick={() => onConfirm()}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            class="w-full rounded-md bg-sky-200 p-1"
+                            onclick={props.onCancel}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 p-4">
-                    <button
-                        class="w-full rounded-md bg-red-200 p-1 "
-                        onclick={() => onConfirm()}
-                    >
-                        Delete
-                    </button>
-                    <button
-                        class="w-full rounded-md bg-sky-200 p-1"
-                        onclick={props.onCancel}
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
+            )}
         </div>
     );
 }

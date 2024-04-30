@@ -4,7 +4,10 @@ import Layout from "../layouts/Layout.astro";
 import { checkIsAuthenticated } from "../helpers/checkIsAuthenticated";
 import { getTransaction } from "../helpers/getTransaction";
 
-let { user, status } = await checkIsAuthenticated(Astro.locals, Astro.cookies);
+let { user, status } = await checkIsAuthenticated(
+    Astro.locals.runtime.env,
+    Astro.cookies,
+);
 if (status === 401) return Astro.redirect("/login/google");
 else if (status === 403) return new Response("Forbidden", { status: 403 });
 

@@ -3,10 +3,10 @@ import { getLuciaFromD1 } from "./auth";
 import type { User } from "lucia";
 
 export const checkIsAuthenticated = async (
-    locals: App.Locals,
+    env: ENV,
     cookies: AstroCookies,
 ): Promise<{ user: User | null; status: number }> => {
-    const { db, lucia } = getLuciaFromD1(locals.runtime.env.D1);
+    const { lucia } = getLuciaFromD1(env.D1);
     const sessionId = cookies.get(lucia.sessionCookieName)?.value ?? null;
 
     if (!sessionId) {
@@ -14,9 +14,7 @@ export const checkIsAuthenticated = async (
     }
     const { session, user } = await lucia.validateSession(sessionId);
 
-    const authenticatedEmails: string[] = JSON.parse(
-        locals.runtime.env.AUTHENTICATED_EMAILS,
-    );
+    const authenticatedEmails: string[] = JSON.parse(env.AUTHENTICATED_EMAILS);
 
     if (
         !user ||

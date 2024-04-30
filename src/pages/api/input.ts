@@ -11,11 +11,14 @@ import {
 } from "../../../db/schema";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
+import { checkIsAuthenticated } from "../../helpers/checkIsAuthenticated";
 
 export async function POST(context: APIContext) {
     const runtime = context.locals.runtime;
-
     const db = drizzle(runtime.env.D1);
+    const user = checkIsAuthenticated(runtime.env, context.cookies);
+
+    if (!user) return new Response("unauthorized", { status: 401 });
 
     const formData = await context.request.formData();
 
