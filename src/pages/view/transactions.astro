@@ -33,7 +33,7 @@ if (Astro.locals.runtime.env.DEV) {
 
 let canEdit = false;
 const { user, status } = await checkIsAuthenticated(
-    Astro.locals,
+    Astro.locals.runtime.env,
     Astro.cookies,
 );
 if (user) canEdit = true;
