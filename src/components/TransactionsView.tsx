@@ -95,6 +95,7 @@ export default function TransactionsView(props: {
                     filter={filter()}
                     date={props.date}
                     editing={editing()}
+                    canEdit={props.canEdit}
                     setEditing={setEditing}
                 />
             </div>
