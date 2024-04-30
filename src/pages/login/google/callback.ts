@@ -43,8 +43,12 @@ export async function GET(context: APIContext): Promise<Response> {
                 },
             },
         );
-        const user = await googleUserResponse.json();
-        //@ts-expect-error
+        const userText = await googleUserResponse.text();
+        console.log("text", userText);
+        const json = JSON.parse(userText);
+        console.log("json", json);
+        const user: GoogleUser = { id: json.id, email: json.email };
+        console.log("user", user);
         const googleUser: GoogleUser = { id: user.id, email: user.email };
         const existingUser = await db
             .select()
