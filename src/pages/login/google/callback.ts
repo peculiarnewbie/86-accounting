@@ -31,6 +31,7 @@ export async function GET(context: APIContext): Promise<Response> {
 
     try {
         const codeVerifier = generateCodeVerifier();
+        console.log("codeVerifier", codeVerifier);
         let tokens: GoogleTokens;
         try {
             tokens = await google.validateAuthorizationCode(code, codeVerifier);

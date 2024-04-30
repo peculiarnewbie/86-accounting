@@ -7,6 +7,7 @@ import type { APIContext } from "astro";
 export async function GET(context: APIContext): Promise<Response> {
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
+    console.log("codeVerifier", codeVerifier);
     const google = getGoogle(
         context.locals.runtime.env.GOOGLE_CLIENT_ID,
         context.locals.runtime.env.GOOGLE_CLIENT_SECRET,
