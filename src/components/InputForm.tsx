@@ -14,17 +14,17 @@ import dayjs from "dayjs";
 import { navigate } from "astro/virtual-modules/transitions-router.js";
 
 export const parseCurrency = (money: number) => {
-    let string = money.toString();
-    let parts = [] as string[];
-    for (let i = string.length; i > 3; i -= 3) {
-        parts.push(string.slice(i - 3, i));
-    }
-    const leftOver = ((string.length + 2) % 3) + 1;
-    string = "Rp" + string.slice(0, leftOver);
-    parts.forEach((part) => {
-        string += "." + part;
-    });
-    return string;
+    return money.toLocaleString("id-ID");
+    // let parts = [] as string[];
+    // for (let i = string.length; i > 3; i -= 3) {
+    //     parts.push(string.slice(i - 3, i));
+    // }
+    // const leftOver = ((string.length + 2) % 3) + 1;
+    // string = "Rp" + string.slice(0, leftOver);
+    // parts.forEach((part) => {
+    //     string += "." + part;
+    // });
+    // return string;
 };
 
 export default function InputForm(props: { prevData?: DataType }) {
@@ -62,7 +62,7 @@ export default function InputForm(props: { prevData?: DataType }) {
         console.log("json response", data);
         setResponse(JSON.stringify(data));
 
-        navigate("/view");
+        navigate("/");
     }
 
     createEffect(() => {
