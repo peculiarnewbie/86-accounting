@@ -8,7 +8,9 @@ if (!Astro.cookies.get("auth_session"))
 
 // const authSession = Astro.cookies.get("auth_session");
 
-const userResponse = await fetch(`/api/getUserEmail`);
+const host = new URL(Astro.request.url).host;
+
+const userResponse = await fetch(`${host}/api/getUserEmail`);
 const user = (await userResponse.json()) as {
     id: string;
     email: string;
