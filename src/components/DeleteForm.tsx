@@ -15,7 +15,7 @@ export default function DeleteForm() {
         console.log("json response", data);
         setResponse(data);
 
-        return "ok";
+        window.location.reload();
     }
 
     return (
