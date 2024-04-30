@@ -3,10 +3,15 @@ import InputForm from "../components/InputForm";
 import { checkIsAuthenticated } from "../helpers/checkIsAuthenticated";
 import Layout from "../layouts/Layout.astro";
 
-const user = checkIsAuthenticated(Astro.locals, Astro.cookies);
-if (!user) return Astro.redirect("/login");
+const { user, status } = await checkIsAuthenticated(
+    Astro.locals,
+    Astro.cookies,
+);
+if (status === 401) return Astro.redirect("/login/google");
+else if (status === 403) return new Response("Forbidden", { status: 403 });
 ---
 
 <Layout title="input">
+    <p>Hello {user}</p>
     <InputForm client:load />
 </Layout>

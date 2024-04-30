@@ -32,7 +32,10 @@ if (Astro.locals.runtime.env.DEV) {
 }
 
 let canEdit = false;
-const user = await checkIsAuthenticated(Astro.locals, Astro.cookies);
+const { user, status } = await checkIsAuthenticated(
+    Astro.locals,
+    Astro.cookies,
+);
 if (user) canEdit = true;
 ---
 
