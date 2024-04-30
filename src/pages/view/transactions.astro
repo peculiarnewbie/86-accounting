@@ -6,6 +6,7 @@ import { transactions, type DataType } from "../../../db/schema";
 import { and, between, eq, not } from "drizzle-orm";
 import { parseParams } from "../../helpers/dateHelpers";
 import { dummyData } from "../../../db/dummyData";
+import { checkIsAuthenticated } from "../../helpers/checkIsAuthenticated";
 
 const url = new URL(Astro.request.url);
 const searchParams = new URLSearchParams(url.search);
@@ -30,12 +31,9 @@ if (Astro.locals.runtime.env.DEV) {
         )) as DataType[];
 }
 
-let editing = false;
-if (searchParams.get("edit")) {
-    // TODO: give middleware to check if admin instead
-    // then let admin edit on client side
-    editing = true;
-}
+let canEdit = false;
+const user = await checkIsAuthenticated(Astro.locals, Astro.cookies);
+if (user) canEdit = true;
 ---
 
 <Layout title="transactions">
@@ -43,6 +41,6 @@ if (searchParams.get("edit")) {
         client:load
         data={data}
         date={date.valueOf()}
-        editing={editing}
+        canEdit={canEdit}
     />
 </Layout>

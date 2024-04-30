@@ -1,6 +1,10 @@
 ---
 import InputForm from "../components/InputForm";
+import { checkIsAuthenticated } from "../helpers/checkIsAuthenticated";
 import Layout from "../layouts/Layout.astro";
+
+const user = checkIsAuthenticated(Astro.locals, Astro.cookies);
+if (!user) return Astro.redirect("/login");
 ---
 
 <Layout title="input">

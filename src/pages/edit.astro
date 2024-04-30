@@ -3,59 +3,14 @@ import { eq } from "drizzle-orm";
 import { dummyData } from "../../db/dummyData";
 import { transactions, type DataType } from "../../db/schema";
 import InputForm from "../components/InputForm";
-import { getLuciaFromD1 } from "../helpers/auth";
 import Layout from "../layouts/Layout.astro";
+import { checkIsAuthenticated } from "../helpers/checkIsAuthenticated";
+import { getTransaction } from "../helpers/getTransaction";
 
-if (!Astro.cookies.get("auth_session"))
-    return new Response(null, { status: 401 });
+let user = await checkIsAuthenticated(Astro.locals, Astro.cookies);
+if (!user) return Astro.redirect("/login");
 
-// const authSession = Astro.cookies.get("auth_session");
-
-const { db, lucia } = getLuciaFromD1(Astro.locals.runtime.env.D1);
-const sessionId = Astro.cookies.get(lucia.sessionCookieName)?.value ?? null;
-console.log(sessionId);
-if (!sessionId) {
-    return new Response(null, {
-        status: 401,
-    });
-}
-const { session, user } = await lucia.validateSession(sessionId);
-
-console.log(session, user);
-
-const authenticatedEmails: string[] = JSON.parse(
-    Astro.locals.runtime.env.AUTHENTICATED_EMAILS,
-);
-
-console.log(authenticatedEmails);
-
-if (
-    !user ||
-    authenticatedEmails.findIndex((email) => email === user.email) === -1
-) {
-    return new Response(null, {
-        status: 403,
-    });
-}
-
-let data: DataType;
-
-if (Astro.locals.runtime.env.DEV) data = dummyData[3];
-
-const url = new URL(Astro.request.url);
-const searchParams = new URLSearchParams(url.search);
-
-const id = searchParams.get("id");
-
-if (!id) data = {} as DataType;
-else {
-    data = (
-        (await db
-            .select()
-            .from(transactions)
-            .where(eq(transactions.id, id))) as DataType[]
-    )[0];
-}
+const data = await getTransaction(Astro.locals);
 ---
 
 <Layout title="edit">
