@@ -5,15 +5,15 @@ type ENV = {
     SERVER_URL: string;
     D1: D1Namespace;
     DEV: string;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
 };
 
 type Runtime = import("@astrojs/cloudflare").AdvancedRuntime<ENV>;
 
 declare namespace App {
     interface Locals extends Runtime {
-        user: {
-            name: string;
-            surname: string;
-        };
+        session: import("lucia").Session | null;
+        user: import("lucia").User | null;
     }
 }

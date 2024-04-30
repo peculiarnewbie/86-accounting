@@ -54,3 +54,20 @@ export const transactions = sqliteTable("transactions", {
 
 export type Transaction = typeof transactions.$inferSelect; // return type when queried
 export type NewTransaction = typeof transactions.$inferInsert;
+
+export const usersTable = sqliteTable("user", {
+    id: text("id").notNull().primaryKey(),
+    github_id: text("github_id").notNull(),
+    username: text("username").notNull(),
+});
+
+export const sessionsTable = sqliteTable("session", {
+    id: text("id").notNull().primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => usersTable.id),
+    expiresAt: integer("expires_at").notNull(),
+});
+
+export type SelectUser = typeof usersTable.$inferSelect;
+export type InsertUser = typeof usersTable.$inferInsert;
