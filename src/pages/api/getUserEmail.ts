@@ -30,5 +30,5 @@ export async function GET(context: APIContext) {
             status: 403,
         });
     }
-    return new Response(user.email);
+    return Response.json({ email: user.email });
 }
