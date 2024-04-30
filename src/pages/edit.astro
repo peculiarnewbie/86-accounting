@@ -3,9 +3,16 @@ import type { DataType } from "../../db/schema";
 import InputForm from "../components/InputForm";
 import Layout from "../layouts/Layout.astro";
 
-const url = new URL(Astro.request.url);
-const searchParams = new URLSearchParams(url.search);
-const id = searchParams.get("id");
+if (!Astro.cookies.get("auth_session"))
+    return new Response(null, { status: 401 });
+
+// const authSession = Astro.cookies.get("auth_session");
+
+const userResponse = await fetch(`/api/getUserEmail`);
+const user = (await userResponse.json()) as {
+    id: string;
+    email: string;
+};
 
 const response = await fetch(
     Astro.request.url.replace("edit", `api/getTransaction`),
@@ -15,5 +22,6 @@ const data = (await response.json()) as DataType;
 ---
 
 <Layout title="edit">
+    <p>editing as {user.email}</p>
     <InputForm client:load prevData={data} />
 </Layout>

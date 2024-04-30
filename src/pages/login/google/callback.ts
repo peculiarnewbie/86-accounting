@@ -31,29 +31,10 @@ export async function GET(context: APIContext): Promise<Response> {
 
     try {
         const codeVerifier = context.locals.runtime.env.GOOGLE_VERIFIER;
-        console.log("codeVerifier", codeVerifier);
-        let tokens: GoogleTokens;
-        try {
-            tokens = await google.validateAuthorizationCode(code, codeVerifier);
-        } catch (e) {
-            console.log("erroring", e);
-            if (
-                e instanceof OAuth2RequestError &&
-                e.message === "bad_verification_code"
-            ) {
-                // invalid code
-                return new Response(null, {
-                    status: 400,
-                });
-            }
-            return new Response("mehh", {
-                status: 500,
-
-                //@ts-expect-error
-                error: e,
-            });
-        }
-        console.log("tokens", tokens);
+        const tokens = await google.validateAuthorizationCode(
+            code,
+            codeVerifier,
+        );
         const googleUserResponse = await fetch(
             "https://openidconnect.googleapis.com/v1/userinfo",
             {
@@ -62,13 +43,9 @@ export async function GET(context: APIContext): Promise<Response> {
                 },
             },
         );
-        console.log("response", googleUserResponse);
         const userText = await googleUserResponse.text();
-        console.log("text", userText);
         const json = JSON.parse(userText);
-        console.log("json", json);
         const user: GoogleUser = { id: json.id, email: json.email };
-        console.log("user", user);
         const googleUser: GoogleUser = { id: user.id, email: user.email };
         const existingUser = await db
             .select()
@@ -117,7 +94,7 @@ export async function GET(context: APIContext): Promise<Response> {
     }
 }
 
-interface GoogleUser {
+export interface GoogleUser {
     id: string;
     email: string;
 }
