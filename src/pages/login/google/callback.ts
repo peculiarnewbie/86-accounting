@@ -21,6 +21,7 @@ export async function GET(context: APIContext): Promise<Response> {
     );
     const code = context.url.searchParams.get("code");
     const state = context.url.searchParams.get("state");
+    console.log(code, state);
     const storedState =
         context.cookies.get("google_oauth_state")?.value ?? null;
     if (!code || !state || !storedState || state !== storedState) {
@@ -35,6 +36,7 @@ export async function GET(context: APIContext): Promise<Response> {
             code,
             codeVerifier,
         );
+        console.log("tokens", tokens);
         const googleUserResponse = await fetch(
             "https://openidconnect.googleapis.com/v1/userinfo",
             {
@@ -43,6 +45,7 @@ export async function GET(context: APIContext): Promise<Response> {
                 },
             },
         );
+        console.log("response", googleUserResponse);
         const userText = await googleUserResponse.text();
         console.log("text", userText);
         const json = JSON.parse(userText);
