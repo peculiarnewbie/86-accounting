@@ -13,11 +13,7 @@ import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 
 export async function POST(context: APIContext) {
-    console.log("sup");
-
     const runtime = context.locals.runtime;
-
-    console.log(runtime.env.D1);
 
     const db = drizzle(runtime.env.D1);
 
@@ -43,51 +39,50 @@ export async function POST(context: APIContext) {
 
     const { id, ...rest } = data;
 
-    const response = await db.transaction(async (tx) => {
-        let moneyUpdate = data.money;
+    const bank = await db.select().from(banks).where(eq(banks.name, data.bank));
 
-        const bank = await tx
-            .select()
-            .from(banks)
-            .where(eq(banks.name, data.bank));
-        const currentMoney = bank[0].money;
+    let moneyUpdate = data.money;
+    const currentMoney = bank[0].money;
 
-        const transaction = await tx
-            .select()
-            .from(transactions)
-            .where(eq(transactions.id, id));
+    const transaction = await db
+        .select()
+        .from(transactions)
+        .where(eq(transactions.id, id));
 
-        // updating transaction
-        if (transaction.length > 0) {
-            tx.update(transactions)
-                .set({ ...rest })
-                .where(eq(transactions.id, id));
+    let response;
 
-            if (transaction[0].arah === data.arah) {
-                moneyUpdate = data.money - (transaction[0].money ?? 0);
-            } else {
-                moneyUpdate = data.money + (transaction[0].money ?? 0);
-            }
+    // updating transaction
+    if (transaction.length > 0) {
+        if (transaction[0].arah === data.arah) {
+            moneyUpdate = data.money - (transaction[0].money ?? 0);
         } else {
-            tx.insert(transactions)
-                .values({ ...data })
-                .onConflictDoUpdate({
-                    target: transactions.id,
-                    set: { ...rest },
-                })
-                .returning();
+            moneyUpdate = data.money + (transaction[0].money ?? 0);
         }
 
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
+        response = await db.transaction(async (tx) => {
+            tx.update(transactions)
+                .set({ ...rest })
+                .where(eq(transactions.id, id));
+            tx.update(banks)
+                .set({ money: currentMoney + moneyUpdate })
+                .where(eq(banks.name, data.bank));
+        });
+    } else {
+        if (data.arah === "keluar") {
+            moneyUpdate = -moneyUpdate;
+        }
 
-        const newMoney = currentMoney + moneyUpdate;
-        tx.update(banks)
-            .set({ money: newMoney })
-            .where(eq(banks.name, data.bank))
-            .returning();
-    });
+        response = await db.transaction(async (tx) => {
+            tx.insert(transactions).values({ ...data });
+            tx.update(banks)
+                .set({ money: currentMoney + moneyUpdate })
+                .where(eq(banks.name, data.bank))
+                .returning();
+        });
+    }
 
     return Response.json(response);
 }
