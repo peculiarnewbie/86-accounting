@@ -1,14 +1,59 @@
 ---
+import { dummyData } from "../../db/dummyData";
+import Card from "../components/Card.astro";
 import Layout from "../layouts/Layout.astro";
+import DateInput from "../components/DateInput";
+import { getLuciaFromD1 } from "../helpers/auth";
+import { banks, transactions, type DataType } from "../../db/schema";
+import { desc, eq } from "drizzle-orm";
+import { Banks } from "../../db/schema";
+
+const { db } = getLuciaFromD1(Astro.locals.runtime.env.D1);
+
+const pulledBanks = await db.select().from(banks);
+
+const bni = pulledBanks.find((bank) => bank.name === Banks.BNI);
+const mandiri = pulledBanks.find((bank) => bank.name === Banks.Mandiri);
+
+const lastBNITransaction = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.bank, Banks.BNI))
+    .orderBy(desc(transactions.date))
+    .limit(1)) as DataType[];
+
+const lastMandiriTransaction = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.bank, Banks.Mandiri))
+    .orderBy(desc(transactions.date))
+    .limit(1)) as DataType[];
+
+if (!bni || !mandiri) return new Response("Not Found", { status: 404 });
 ---
 
-<Layout title="Welcome to Astro.">
-    <main>
-        <div class="container flex flex-col bg-black text-white">
-            <a href="/input">input</a>
-            <a href="/view">view</a>
-            <a href="/view/transactions">transactions</a>
-            <a href="/login/google">login</a>
+<Layout title="account">
+    <div class="container mx-auto items-center p-4">
+        <div class="h-20"></div>
+        <div class="flex w-full flex-col items-center gap-4 md:flex-row">
+            <Card
+                title="BNI"
+                value={bni?.money ?? 0}
+                lastTransaction={lastBNITransaction[0]}
+            />
+            <Card
+                title="Mandiri"
+                value={mandiri?.money ?? 0}
+                lastTransaction={lastMandiriTransaction[0]}
+            />
         </div>
-    </main>
+        <div
+            class="ml-auto mr-auto flex w-fit flex-col items-center pt-4 md:ml-0 md:items-start"
+        >
+            <p>show transactions</p>
+            <DateInput client:load />
+            <a class="mt-8 w-32 rounded-md bg-blue-200 p-2 text-center">Input</a
+            >
+        </div>
+    </div>
 </Layout>
