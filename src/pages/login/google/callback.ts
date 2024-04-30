@@ -35,6 +35,7 @@ export async function GET(context: APIContext): Promise<Response> {
         try {
             tokens = await google.validateAuthorizationCode(code, codeVerifier);
         } catch (e) {
+            console.log("erroring", e);
             if (
                 e instanceof OAuth2RequestError &&
                 e.message === "bad_verification_code"
@@ -44,8 +45,9 @@ export async function GET(context: APIContext): Promise<Response> {
                     status: 400,
                 });
             }
-            return new Response(null, {
+            return new Response("mehh", {
                 status: 500,
+
                 //@ts-expect-error
                 error: e,
             });
