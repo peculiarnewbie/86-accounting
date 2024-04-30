@@ -6,8 +6,8 @@ import { parseCurrency } from "./InputForm";
 interface Props {
     title: string;
     value: number;
-    lastTransaction: {
-        note: string;
+    lastTransaction?: {
+        note?: string;
         date: number;
         kategori: string;
         money: number;
@@ -17,7 +17,8 @@ interface Props {
 }
 
 const { title, value, lastTransaction } = Astro.props;
-const date = new Date(lastTransaction.date);
+let date = new Date();
+if (lastTransaction) date = new Date(lastTransaction.date);
 const monthParams = `month=${date.getMonth() + 1}&year=${date.getFullYear()}`;
 ---
 
@@ -30,6 +31,7 @@ const monthParams = `month=${date.getMonth() + 1}&year=${date.getFullYear()}`;
         <button class="h-5">{">"}</button>
     </div>
     <div class="pb-1 pt-4">transaksi terakhir:</div>
+    {lastTransaction && (
     <a
         href={`/view/transactions?${monthParams}`}
         class=`${lastTransaction.arah === "masuk" ? "" : "text-red-700"}`
@@ -50,4 +52,6 @@ const monthParams = `month=${date.getMonth() + 1}&year=${date.getFullYear()}`;
             </div>
         </div>
     </a>
+    )
+    }
 </div>

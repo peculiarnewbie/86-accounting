@@ -3,12 +3,32 @@ import { dummyData } from "../../../db/dummyData";
 import Card from "../../components/Card.astro";
 import Layout from "../../layouts/Layout.astro";
 import DateInput from "../../components/DateInput";
+import { getLuciaFromD1 } from "../../helpers/auth";
+import { banks, transactions, type DataType } from "../../../db/schema";
+import { desc, eq } from "drizzle-orm";
 
-const dummyTransaction = dummyData[0];
-const dummyTransaction1 = dummyData[2];
+const { db } = getLuciaFromD1(Astro.locals.runtime.env.D1);
 
-// TODO: get last transaction from api
-// const { lastBNI, lastMandiri } = (await response.json()) as any;
+const pulledBanks = await db.select().from(banks);
+
+const bni = pulledBanks.find((bank) => bank.name === "BNI");
+const mandiri = pulledBanks.find((bank) => bank.name === "Mandiri");
+
+const lastBNITransaction = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.bank, "BNI"))
+    .orderBy(desc(transactions.date))
+    .limit(1)) as DataType[];
+
+const lastMandiriTransaction = (await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.bank, "Mandiri"))
+    .orderBy(desc(transactions.date))
+    .limit(1)) as DataType[];
+
+if (!bni || !mandiri) return new Response("Not Found", { status: 404 });
 ---
 
 <Layout title="account">
@@ -17,13 +37,13 @@ const dummyTransaction1 = dummyData[2];
         <div class="flex w-full flex-col items-center gap-4 md:flex-row">
             <Card
                 title="BNI"
-                value={200_000}
-                lastTransaction={dummyTransaction}
+                value={bni?.money ?? 0}
+                lastTransaction={lastBNITransaction[0]}
             />
             <Card
                 title="Mandiri"
-                value={420_000}
-                lastTransaction={dummyTransaction1}
+                value={mandiri?.money ?? 0}
+                lastTransaction={lastMandiriTransaction[0]}
             />
         </div>
         <div
