@@ -62,11 +62,12 @@ export async function POST(context: APIContext) {
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
-        response = db
+        response = await db
             .update(transactions)
             .set({ ...rest })
             .where(eq(transactions.id, id));
-        db.update(banks)
+        await db
+            .update(banks)
             .set({ money: currentMoney + moneyUpdate })
             .where(eq(banks.name, data.bank));
     } else {
@@ -74,8 +75,9 @@ export async function POST(context: APIContext) {
             moneyUpdate = -moneyUpdate;
         }
 
-        response = db.insert(transactions).values({ ...data });
-        db.update(banks)
+        response = await db.insert(transactions).values({ ...data });
+        await db
+            .update(banks)
             .set({ money: currentMoney + moneyUpdate })
             .where(eq(banks.name, data.bank))
             .returning();
