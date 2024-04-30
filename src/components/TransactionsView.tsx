@@ -110,6 +110,7 @@ export default function TransactionsView(props: {
             </For>
             <div
                 class="fixed bottom-0 left-0 w-full bg-slate-100 p-2"
+                style={{ "box-shadow": "0px -4px 15px rgba(0, 0, 0, 0.1)" }}
                 ref={totalContainer}
             >
                 <div class="container mx-auto flex justify-between">
