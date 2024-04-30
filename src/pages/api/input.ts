@@ -46,8 +46,6 @@ export async function POST(context: APIContext) {
         .from(transactions)
         .where(eq(transactions.id, id));
 
-    const bank = await db.select().from(banks).where(eq(banks.name, data.bank));
-
     let response;
 
     // updating transaction
@@ -62,8 +60,12 @@ export async function POST(context: APIContext) {
             moneyUpdate = -moneyUpdate;
         }
 
-        const currentMoney = bank[0].money;
         response = await db.transaction(async (tx) => {
+            const bank = await tx
+                .select()
+                .from(banks)
+                .where(eq(banks.name, data.bank));
+            const currentMoney = bank[0].money;
             await tx
                 .update(transactions)
                 .set({ ...rest })
@@ -78,8 +80,12 @@ export async function POST(context: APIContext) {
             moneyUpdate = -moneyUpdate;
         }
 
-        const currentMoney = bank[0].money;
         response = await db.transaction(async (tx) => {
+            const bank = await tx
+                .select()
+                .from(banks)
+                .where(eq(banks.name, data.bank));
+            const currentMoney = bank[0].money;
             await tx.insert(transactions).values({ ...data });
             await tx
                 .update(banks)
