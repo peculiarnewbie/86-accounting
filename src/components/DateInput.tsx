@@ -1,7 +1,7 @@
 import { navigate } from "astro:transitions/client";
 import dayjs from "dayjs";
 
-export default function DateInput() {
+export default function DateInput(props: { date?: number }) {
     const changeMonth = (e: Event) => {
         const value = (e.target as HTMLInputElement).value;
         const date = dayjs(value, "YYYY-MM");
@@ -10,5 +10,12 @@ export default function DateInput() {
             `/view/transactions?month=${date.month() + 1}&year=${date.year()}`,
         );
     };
-    return <input type="month" name="date" onchange={changeMonth} />;
+    return (
+        <input
+            type="month"
+            name="date"
+            value={props.date ? dayjs(props.date).format("YYYY-MM") : ""}
+            onchange={changeMonth}
+        />
+    );
 }
