@@ -21,7 +21,6 @@ export async function GET(context: APIContext): Promise<Response> {
     );
     const code = context.url.searchParams.get("code");
     const state = context.url.searchParams.get("state");
-    console.log(code, state);
     const storedState =
         context.cookies.get("google_oauth_state")?.value ?? null;
     if (!code || !state || !storedState || state !== storedState) {
@@ -31,6 +30,7 @@ export async function GET(context: APIContext): Promise<Response> {
     }
 
     try {
+        console.log("code", code);
         const codeVerifier = generateCodeVerifier();
         const tokens: GoogleTokens = await google.validateAuthorizationCode(
             code,
