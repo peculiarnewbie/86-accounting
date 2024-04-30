@@ -1,4 +1,4 @@
-import { For, createEffect, createSignal } from "solid-js";
+import { For, createEffect, createSignal, type Setter } from "solid-js";
 import {
     Kategori,
     type DataType,
@@ -14,6 +14,7 @@ import { createStore } from "solid-js/store";
 import Button from "./Button";
 import DateInput from "./DateInput";
 import TransactionItem from "./TransactionItem";
+import { navigate } from "astro:transitions/client";
 
 type Filter = {
     arah?: ArahType;
@@ -30,9 +31,8 @@ type Total = {
 export default function TransactionsView(props: {
     data: DataType[];
     date: number;
-    editing?: boolean;
+    canEdit?: boolean;
 }) {
-    console.log(props.editing);
     const [store, setStore] = createStore<{
         transactions: DataType[];
         filteredAndSorted: DataType[];
@@ -41,6 +41,7 @@ export default function TransactionsView(props: {
         filteredAndSorted: [],
     });
 
+    const [editing, setEditing] = createSignal(false);
     const [filter, setFilter] = createSignal<Filter>({});
     const [total, setTotal] = createSignal<Total>({ total: 0 });
 
@@ -88,11 +89,15 @@ export default function TransactionsView(props: {
             style={{ "padding-bottom": "100px" }}
         >
             {" "}
-            <Filters
-                updateFilter={updateFilter}
-                filter={filter()}
-                date={props.date}
-            />
+            <div>
+                <Filters
+                    updateFilter={updateFilter}
+                    filter={filter()}
+                    date={props.date}
+                    editing={editing()}
+                    setEditing={setEditing}
+                />
+            </div>
             <For
                 each={store.filteredAndSorted}
                 fallback={
@@ -104,7 +109,7 @@ export default function TransactionsView(props: {
                 {(transaction, i) => (
                     <TransactionItem
                         transaction={transaction}
-                        editing={props.editing}
+                        editing={editing()}
                     />
                 )}
             </For>
@@ -148,15 +153,34 @@ function Filters(props: {
     updateFilter: (update: Filter) => void;
     filter: Filter;
     date: number;
+    editing: boolean | undefined;
+    canEdit?: boolean;
+    setEditing: Setter<boolean>;
 }) {
     const [show, setShow] = createSignal(false);
 
     return (
         <div class="flex flex-col items-center p-4">
             <div class="flex w-full justify-between">
-                <Button onClick={() => setShow(!show())} active={show()}>
-                    Filters
-                </Button>
+                <div class="flex gap-2">
+                    <Button onClick={() => setShow(!show())} active={show()}>
+                        Filters
+                    </Button>
+
+                    {props.canEdit ? (
+                        !props.editing ? (
+                            <Button onClick={() => props.setEditing(true)}>
+                                Edit
+                            </Button>
+                        ) : (
+                            <Button onClick={() => props.setEditing(false)}>
+                                Back
+                            </Button>
+                        )
+                    ) : (
+                        <></>
+                    )}
+                </div>
                 <DateInput date={props.date} />
             </div>
             <div

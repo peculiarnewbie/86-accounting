@@ -2,8 +2,8 @@ import { children } from "solid-js";
 
 export default function Button(props: {
     onClick: () => void;
-    active: boolean;
-    children: any;
+    active?: boolean;
+    children?: any;
 }) {
     const c = children(() => props.children);
     return (
