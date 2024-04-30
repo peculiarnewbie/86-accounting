@@ -10,17 +10,21 @@ if (!Astro.cookies.get("auth_session"))
 
 const host = new URL(Astro.request.url).host;
 
+console.log(host);
 const userResponse = await fetch(host + "/api/getUserEmail");
+console.log(userResponse);
 const user = (await userResponse.json()) as {
     id: string;
     email: string;
 };
 
+console.log(user);
 const response = await fetch(
     Astro.request.url.replace("edit", `api/getTransaction`),
 );
 
 const data = (await response.json()) as DataType;
+console.log(data);
 ---
 
 <Layout title="edit">
