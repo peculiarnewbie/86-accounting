@@ -1,5 +1,5 @@
 import { Lucia } from "lucia";
-import { GitHub } from "arctic";
+import { Google } from "arctic";
 import { sessionsTable, usersTable } from "../../db/schema";
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 import type { DrizzleD1Database } from "drizzle-orm/d1/driver";
@@ -47,7 +47,8 @@ interface DatabaseUserAttributes {
     username: string;
 }
 
-export const getGithub = (id: string, secret: string) => new GitHub(id, secret);
+export const getGoogle = (id: string, secret: string, uri: string) =>
+    new Google(id, secret, uri);
 // export const github = new GitHub(
 // 	import.meta.env.GITHUB_CLIENT_ID,
 // 	import.meta.env.GITHUB_CLIENT_SECRET

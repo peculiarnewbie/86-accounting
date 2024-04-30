@@ -57,8 +57,7 @@ export type NewTransaction = typeof transactions.$inferInsert;
 
 export const usersTable = sqliteTable("user", {
     id: text("id").notNull().primaryKey(),
-    github_id: text("github_id").notNull(),
-    username: text("username").notNull(),
+    email: text("email").notNull().unique(),
 });
 
 export const sessionsTable = sqliteTable("session", {
