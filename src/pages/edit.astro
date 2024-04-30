@@ -8,7 +8,7 @@ let { user, status } = await checkIsAuthenticated(Astro.locals, Astro.cookies);
 if (status === 401) return Astro.redirect("/login/google");
 else if (status === 403) return new Response("Forbidden", { status: 403 });
 
-const data = await getTransaction(Astro.locals);
+const data = await getTransaction(Astro.locals, new URL(Astro.request.url));
 ---
 
 <Layout title="edit">

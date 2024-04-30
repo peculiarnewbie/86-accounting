@@ -15,7 +15,7 @@ export const checkIsAuthenticated = async (
     const { session, user } = await lucia.validateSession(sessionId);
 
     const authenticatedEmails: string[] = JSON.parse(
-        Astro.locals.runtime.env.AUTHENTICATED_EMAILS,
+        locals.runtime.env.AUTHENTICATED_EMAILS,
     );
 
     if (

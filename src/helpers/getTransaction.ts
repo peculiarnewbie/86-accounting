@@ -3,13 +3,12 @@ import { dummyData } from "../../db/dummyData";
 import { transactions, type DataType } from "../../db/schema";
 import { getLuciaFromD1 } from "./auth";
 
-export const getTransaction = async (locals: App.Locals) => {
+export const getTransaction = async (locals: App.Locals, url: URL) => {
     const { db } = getLuciaFromD1(locals.runtime.env.D1);
     let data: DataType;
 
-    if (Astro.locals.runtime.env.DEV) data = dummyData[3];
+    if (locals.runtime.env.DEV) data = dummyData[3];
 
-    const url = new URL(Astro.request.url);
     const searchParams = new URLSearchParams(url.search);
 
     const id = searchParams.get("id");
