@@ -30,7 +30,7 @@ export async function GET(context: APIContext): Promise<Response> {
     }
 
     try {
-        const codeVerifier = generateCodeVerifier();
+        const codeVerifier = context.locals.runtime.env.GOOGLE_VERIFIER;
         console.log("codeVerifier", codeVerifier);
         let tokens: GoogleTokens;
         try {

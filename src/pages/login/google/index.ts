@@ -13,9 +13,13 @@ export async function GET(context: APIContext): Promise<Response> {
         context.locals.runtime.env.GOOGLE_CLIENT_SECRET,
         context.locals.runtime.env.GOOGLE_REDIRECT_URI,
     );
-    const url = await google.createAuthorizationURL(state, codeVerifier, {
-        scopes: ["profile", "email"],
-    });
+    const url = await google.createAuthorizationURL(
+        state,
+        context.locals.runtime.env.GOOGLE_VERIFIER,
+        {
+            scopes: ["profile", "email"],
+        },
+    );
 
     context.cookies.set("google_oauth_state", state, {
         path: "/",
