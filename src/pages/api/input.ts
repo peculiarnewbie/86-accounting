@@ -39,10 +39,7 @@ export async function POST(context: APIContext) {
 
     const { id, ...rest } = data;
 
-    const bank = await db.select().from(banks).where(eq(banks.name, data.bank));
-
     let moneyUpdate = data.money;
-    const currentMoney = bank[0].money;
 
     const transaction = await db
         .select()
@@ -62,25 +59,39 @@ export async function POST(context: APIContext) {
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
-        response = await db
-            .update(transactions)
-            .set({ ...rest })
-            .where(eq(transactions.id, id));
-        await db
-            .update(banks)
-            .set({ money: currentMoney + moneyUpdate })
-            .where(eq(banks.name, data.bank));
+
+        response = await db.transaction(async (tx) => {
+            const bank = await tx
+                .select()
+                .from(banks)
+                .where(eq(banks.name, data.bank));
+            const currentMoney = bank[0].money;
+            await tx
+                .update(transactions)
+                .set({ ...rest })
+                .where(eq(transactions.id, id));
+            await tx
+                .update(banks)
+                .set({ money: currentMoney + moneyUpdate })
+                .where(eq(banks.name, data.bank));
+        });
     } else {
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
 
-        response = await db.insert(transactions).values({ ...data });
-        await db
-            .update(banks)
-            .set({ money: currentMoney + moneyUpdate })
-            .where(eq(banks.name, data.bank))
-            .returning();
+        response = await db.transaction(async (tx) => {
+            const bank = await tx
+                .select()
+                .from(banks)
+                .where(eq(banks.name, data.bank));
+            const currentMoney = bank[0].money;
+            await tx.insert(transactions).values({ ...data });
+            await tx
+                .update(banks)
+                .set({ money: currentMoney + moneyUpdate })
+                .where(eq(banks.name, data.bank));
+        });
     }
 
     return Response.json(response);
