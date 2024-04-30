@@ -7,10 +7,6 @@ import DateInput from "../../components/DateInput";
 const dummyTransaction = dummyData[0];
 const dummyTransaction1 = dummyData[2];
 
-const response = await fetch(
-    `${Astro.request.url.replace("view", "api")}/view`,
-);
-
 // TODO: get last transaction from api
 // const { lastBNI, lastMandiri } = (await response.json()) as any;
 ---
