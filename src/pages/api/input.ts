@@ -62,26 +62,23 @@ export async function POST(context: APIContext) {
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
-        response = await db.transaction(async (tx) => {
-            tx.update(transactions)
-                .set({ ...rest })
-                .where(eq(transactions.id, id));
-            tx.update(banks)
-                .set({ money: currentMoney + moneyUpdate })
-                .where(eq(banks.name, data.bank));
-        });
+        response = db
+            .update(transactions)
+            .set({ ...rest })
+            .where(eq(transactions.id, id));
+        db.update(banks)
+            .set({ money: currentMoney + moneyUpdate })
+            .where(eq(banks.name, data.bank));
     } else {
         if (data.arah === "keluar") {
             moneyUpdate = -moneyUpdate;
         }
 
-        response = await db.transaction(async (tx) => {
-            tx.insert(transactions).values({ ...data });
-            tx.update(banks)
-                .set({ money: currentMoney + moneyUpdate })
-                .where(eq(banks.name, data.bank))
-                .returning();
-        });
+        response = db.insert(transactions).values({ ...data });
+        db.update(banks)
+            .set({ money: currentMoney + moneyUpdate })
+            .where(eq(banks.name, data.bank))
+            .returning();
     }
 
     return Response.json(response);
