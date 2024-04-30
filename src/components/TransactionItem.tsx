@@ -44,7 +44,7 @@ export default function TransactionItem(props: {
                         <button
                             class="w-full rounded-md bg-sky-200 p-1 "
                             onclick={() =>
-                                navigate(`edit?id=${props.transaction.id}`)
+                                navigate(`/edit?id=${props.transaction.id}`)
                             }
                         >
                             Edit
