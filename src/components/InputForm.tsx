@@ -10,6 +10,8 @@ import {
 import { createEffect, createSignal } from "solid-js";
 import Button from "./Button";
 import { nanoid } from "nanoid";
+import dayjs from "dayjs";
+import { navigate } from "astro/virtual-modules/transitions-router.js";
 
 export const parseCurrency = (money: number) => {
     let string = money.toString();
@@ -34,6 +36,7 @@ export default function InputForm(props: { prevData?: DataType }) {
     const [arah, setArah] = createSignal<ArahType>(Arah.Masuk);
     const [bank, setBank] = createSignal<BankType>(Banks.BNI);
     const [kategori, setKategori] = createSignal<KategoriType>(Kategori.Sosial);
+    const [date, setDate] = createSignal(dayjs().format("YYYY-MM-DD"));
 
     const updateMoney = (e: Event) => {
         const val = (e.target as HTMLInputElement).value;
@@ -59,7 +62,7 @@ export default function InputForm(props: { prevData?: DataType }) {
         console.log("json response", data);
         setResponse(JSON.stringify(data));
 
-        return "ok";
+        navigate("/view");
     }
 
     createEffect(() => {
@@ -68,6 +71,7 @@ export default function InputForm(props: { prevData?: DataType }) {
             setArah(props.prevData.arah);
             setBank(props.prevData.bank);
             setKategori(props.prevData.kategori);
+            setDate(dayjs(props.prevData.date).format("YYYY-MM-DD"));
         }
     });
 
@@ -133,7 +137,15 @@ export default function InputForm(props: { prevData?: DataType }) {
                 </div>
                 <div class="flex flex-col items-start ">
                     <p>tanggal</p>
-                    <input class="rounded-md p-2" type="date" name="date" />
+                    <input
+                        class="rounded-md p-2"
+                        type="date"
+                        name="date"
+                        value={date()}
+                        onchange={(e) => {
+                            dayjs(setDate(e.target.value)).format("YYYY-MM-DD");
+                        }}
+                    />
                 </div>
                 <div class="flex flex-col items-start ">
                     <p>Jumlah</p>

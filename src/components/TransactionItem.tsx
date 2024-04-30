@@ -83,7 +83,7 @@ function ConfirmDeleteModal(props: { id: string; onCancel: () => void }) {
     };
     return (
         <div class="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-            {isLoading() && (
+            {!isLoading() && (
                 <div class=" rounded-md bg-white text-black">
                     <div class="flex items-center justify-between p-4">
                         <div class="text-xcenter text-old text-center">
