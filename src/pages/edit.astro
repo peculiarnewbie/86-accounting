@@ -1,6 +1,9 @@
 ---
-import type { DataType } from "../../db/schema";
+import { eq } from "drizzle-orm";
+import { dummyData } from "../../db/dummyData";
+import { transactions, type DataType } from "../../db/schema";
 import InputForm from "../components/InputForm";
+import { getLuciaFromD1 } from "../helpers/auth";
 import Layout from "../layouts/Layout.astro";
 
 if (!Astro.cookies.get("auth_session"))
@@ -8,25 +11,54 @@ if (!Astro.cookies.get("auth_session"))
 
 // const authSession = Astro.cookies.get("auth_session");
 
-const origin = new URL(Astro.request.url).origin;
+const { db, lucia } = getLuciaFromD1(Astro.locals.runtime.env.D1);
+const sessionId = Astro.cookies.get(lucia.sessionCookieName)?.value ?? null;
+console.log(sessionId);
+if (!sessionId) {
+    return new Response(null, {
+        status: 401,
+    });
+}
+const { session, user } = await lucia.validateSession(sessionId);
 
-const userResponse = await fetch(origin + "/api/getUserEmail");
-console.log(userResponse);
-const user = (await userResponse.json()) as {
-    id: string;
-    email: string;
-};
+console.log(session, user);
 
-console.log(user);
-const response = await fetch(
-    Astro.request.url.replace("edit", `api/getTransaction`),
+const authenticatedEmails: string[] = JSON.parse(
+    Astro.locals.runtime.env.AUTHENTICATED_EMAILS,
 );
 
-const data = (await response.json()) as DataType;
-console.log(data);
+console.log(authenticatedEmails);
+
+if (
+    !user ||
+    authenticatedEmails.findIndex((email) => email === user.email) === -1
+) {
+    return new Response(null, {
+        status: 403,
+    });
+}
+
+let data: DataType;
+
+if (Astro.locals.runtime.env.DEV) data = dummyData[3];
+
+const url = new URL(Astro.request.url);
+const searchParams = new URLSearchParams(url.search);
+
+const id = searchParams.get("id");
+
+if (!id) return Response.json({});
+data = (
+    (await db
+        .select()
+        .from(transactions)
+        .where(eq(transactions.id, id))) as DataType[]
+)[0];
+
+return Response.json(data);
 ---
 
 <Layout title="edit">
-    <p>editing as {user.email}</p>
+    <p>editing as {user?.email}</p>
     <InputForm client:load prevData={data} />
 </Layout>
