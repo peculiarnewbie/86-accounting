@@ -37,6 +37,7 @@ export default function InputForm(props: { prevData?: DataType }) {
     const [bank, setBank] = createSignal<BankType>(Banks.BNI);
     const [kategori, setKategori] = createSignal<KategoriType>(Kategori.Sosial);
     const [date, setDate] = createSignal(dayjs().format("YYYY-MM-DD"));
+    const [note, setNote] = createSignal("");
 
     const updateMoney = (e: Event) => {
         const val = (e.target as HTMLInputElement).value;
@@ -72,6 +73,7 @@ export default function InputForm(props: { prevData?: DataType }) {
             setBank(props.prevData.bank);
             setKategori(props.prevData.kategori);
             setDate(dayjs(props.prevData.date).format("YYYY-MM-DD"));
+            setNote(props.prevData.note ?? "");
         }
     });
 
@@ -169,10 +171,12 @@ export default function InputForm(props: { prevData?: DataType }) {
                         class=" w-full rounded-md p-2"
                         type="text"
                         name="note"
+                        value={note()}
+                        onInput={(e) => setNote(e.target.value)}
                     />
                 </div>
                 <button
-                    class={`min-w-24 cursor-pointer rounded-md bg-slate-100 p-2`}
+                    class={`min-w-24 cursor-pointer rounded-md bg-blue-400 p-2`}
                     type="submit"
                 >
                     input
