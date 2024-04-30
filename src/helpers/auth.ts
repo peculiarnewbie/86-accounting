@@ -19,8 +19,7 @@ export const getLucia = (adapter: DrizzleSQLiteAdapter) => {
         getUserAttributes: (attributes) => {
             return {
                 // attributes has the type of DatabaseUserAttributes
-                githubId: attributes.github_id,
-                username: attributes.username,
+                email: attributes.email,
             };
         },
     });
@@ -43,13 +42,8 @@ export const getLuciaFromD1 = (d1: D1Database) => {
 };
 
 interface DatabaseUserAttributes {
-    github_id: number;
-    username: string;
+    email: string;
 }
 
 export const getGoogle = (id: string, secret: string, uri: string) =>
     new Google(id, secret, uri);
-// export const github = new GitHub(
-// 	import.meta.env.GITHUB_CLIENT_ID,
-// 	import.meta.env.GITHUB_CLIENT_SECRET
-// );
